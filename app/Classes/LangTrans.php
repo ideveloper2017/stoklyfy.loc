@@ -636,7 +636,7 @@ class LangTrans
              'quantity' => 'Miqdor',
              'discount' => 'Chegirma',
              'tax' => 'Soliq',
-             'subtotal' => 'Subtotal',
+             'subtotal' => 'Jami',
              'unit' => 'Birlik',
              'unit_price' => 'Birlik narxi',
              'avl_qty' => 'Avl. miqdor:',
