@@ -18,7 +18,7 @@ class Product extends BaseModel
 
     protected $hidden = ['id', 'category_id', 'brand_id', 'unit_id', 'user_id', 'warehouse_id', 'variant_id', 'variant_value_id', 'parent_id'];
 
-    protected $appends = ['xid', 'x_category_id', 'x_brand_id', 'x_unit_id', 'x_user_id', 'x_warehouse_id', 'x_variant_id', 'x_variant_value_id', 'x_parent_id', 'image_url'];
+    protected $appends = ['xid', 'x_category_id', 'x_brand_id', 'x_unit_id', 'x_user_id','sku','x_warehouse_id', 'x_variant_id', 'x_variant_value_id', 'x_parent_id', 'image_url'];
 
     protected $filterable = ['id', 'products.id', 'products.name','products.sku', 'name','sku', 'item_code', 'category_id', 'brand_id'];
 
