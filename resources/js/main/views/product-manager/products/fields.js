@@ -21,6 +21,7 @@ const fields = () => {
     const initData = {
         warehouse_id: undefined,
         name: "",
+        sky:"",
         slug: "",
         image: undefined,
         image_url: undefined,
@@ -50,6 +51,10 @@ const fields = () => {
         {
             title: "",
             dataIndex: "status",
+        },
+        {
+            title: t("product.sku"),
+            dataIndex: "sku",
         },
         {
             title: t("product.product"),

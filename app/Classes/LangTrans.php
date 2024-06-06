@@ -196,7 +196,7 @@ class LangTrans
              'stock_transfer' => 'Aktsiyalarni o\'tkazish',
              'stock_transfers' => 'Aksiya o\'tkazmalari',
              'profit_loss' => 'Foyda va zarar',
-             'companies' => 'Kompaniyalar',
+             'company' => 'Kompaniyalar',
              'pos_settings' => 'POS sozlamalari',
              'setup_company' => 'Kompaniyani o\'rnatish',
              'expense_reports' => 'Xarajatlar to\'g\'risida hisobot',

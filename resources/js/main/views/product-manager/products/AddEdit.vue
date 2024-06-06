@@ -156,9 +156,8 @@
                                 :label="$t('product.sku')"
                                 name="sku"
                                 :help="rules.sku ? rules.sku.message : null"
-                                :validateStatus="rules.slug ? 'error' : null"
-                                class="required"
-                            >
+                                :validateStatus="rules.sku ? 'error' : null"
+                                class="required">
                                 <a-input
                                     v-model:value="formData.sku"
                                     :placeholder="
@@ -898,7 +897,7 @@ export default defineComponent({
                 custom_fields: customFieldsData.value,
                 warehouse_id: waehouseId.value,
             };
-            console.log(newData);
+
             addEditRequestAdmin({
                 url: props.url,
                 data: newData,
@@ -938,6 +937,7 @@ export default defineComponent({
 
         const addVariationField = (value, option) => {
             variationFields.value.push({
+                sku:"",
                 item_code: "",
                 purchase_price: "",
                 sales_price: "",

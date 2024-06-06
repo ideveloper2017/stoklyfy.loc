@@ -18,7 +18,7 @@ class CreateProductsTable extends Migration
 			$table->string('name', 1000);
 			$table->string('slug', 1000);
 			$table->string('barcode_symbology', 10);
-            $table->string('sku',1000);
+            $table->string('sku',191);
             $table->string('item_code');
 			$table->string('image')->nullable()->default(NULL);
 			$table->bigInteger('category_id')->unsigned()->nullable();
