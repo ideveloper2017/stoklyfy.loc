@@ -21,7 +21,7 @@ const fields = () => {
     const initData = {
         warehouse_id: undefined,
         name: "",
-        sky:"",
+        sku:"",
         slug: "",
         image: undefined,
         image_url: undefined,

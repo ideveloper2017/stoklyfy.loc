@@ -146,9 +146,9 @@ const common = () => {
         const newAmount = parseFloat(Math.abs(amount)).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
         if (appSetting.value.currency.position == "front") {
-            var newAmountString = `${appSetting.value.currency.symbol}${newAmount}`;
+            var newAmountString = `${appSetting.value.currency.symbol} ${newAmount}`;
         } else {
-            var newAmountString = `${newAmount}${appSetting.value.currency.symbol}`;
+            var newAmountString = `${newAmount} ${appSetting.value.currency.symbol}`;
         }
 
         return amount < 0 ? `- ${newAmountString}` : newAmountString;
@@ -158,9 +158,9 @@ const common = () => {
         const newAmount = parseFloat(Math.abs(amount)).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
         if (currency.position == "front") {
-            var newAmountString = `${currency.symbol}${newAmount}`;
+            var newAmountString = `${currency.symbol} ${newAmount}`;
         } else {
-            var newAmountString = `${newAmount}${currency.symbol}`;
+            var newAmountString = `${newAmount} ${currency.symbol}`;
         }
 
         return amount < 0 ? `- ${newAmountString}` : newAmountString;

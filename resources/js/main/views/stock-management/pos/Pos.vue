@@ -39,7 +39,7 @@
             <a-col :xs="24" :sm="24" :md="24" :lg="10" :xl="10">
                 <div class="pos-left-wrapper">
                     <div class="pos-left-header">
-                        <a-card class="left-pos-top" :style="{ marginBottom: '10px' }">
+                        <a-card class="left-pos-top" :style="{ marginBottom: '5px' }">
                             <div class="bill-filters">
                                 <a-row :gutter="16">
                                     <a-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
@@ -129,7 +129,7 @@
                     <div class="pos-left-content">
                         <a-card
                             class="left-pos-middle-table"
-                            :style="{ marginBottom: '10px' }"
+                            :style="{ marginBottom: '5px' }"
                         >
                             <div class="bill-body">
                                 <div class="bill-table">
@@ -148,14 +148,14 @@
                                                     >
                                                         {{ record.name }} <br />
                                                         <small>
-                                                            <a-typography-text code>
-                                                                {{
-                                                                    $t("product.avl_qty")
-                                                                }}
-                                                                {{
-                                                                    `${record.stock_quantity}${record.unit_short_name}`
-                                                                }}
-                                                            </a-typography-text>
+<!--                                                            <a-typography-text code>-->
+<!--                                                                {{-->
+<!--                                                                    $t("product.avl_qty")-->
+<!--                                                                }}-->
+<!--                                                                {{-->
+<!--                                                                    `${record.stock_quantity}${record.unit_short_name}`-->
+<!--                                                                }}-->
+<!--                                                            </a-typography-text>-->
                                                         </small>
                                                     </template>
                                                     <template
