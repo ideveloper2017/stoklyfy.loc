@@ -772,23 +772,14 @@ class Common
     {
         $newCurrency = new Currency();
         $newCurrency->company_id = $company->id;
-        $newCurrency->name = 'Dollar';
-        $newCurrency->code = 'USD';
-        $newCurrency->symbol = '$';
+        $newCurrency->name = 'Uzbekistan so\'m';
+        $newCurrency->code = 'UZS';
+        $newCurrency->symbol = 'сўм';
         $newCurrency->position = 'front';
         $newCurrency->is_deletable = false;
         $newCurrency->save();
 
-        $rupeeCurrency = new Currency();
-        $rupeeCurrency->company_id = $company->id;
-        $rupeeCurrency->name = 'Rupee';
-        $rupeeCurrency->code = 'INR';
-        $rupeeCurrency->symbol = '₹';
-        $rupeeCurrency->position = 'front';
-        $rupeeCurrency->is_deletable = false;
-        $rupeeCurrency->save();
-
-        $enLang = Lang::where('key', 'en')->first();
+        $enLang = Lang::where('key', 'uz')->first();
 
         $company->currency_id = $newCurrency->id;
         $company->lang_id = $enLang->id;

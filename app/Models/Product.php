@@ -31,6 +31,7 @@ class Product extends BaseModel
         'getXVariantIdAttribute' => 'variant_id',
         'getXVariantValueIdAttribute' => 'variant_value_id',
         'getXParentIdAttribute' => 'parent_id',
+        'sku'=>'string',
     ];
 
     protected $casts = [
