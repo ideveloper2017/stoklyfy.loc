@@ -22,7 +22,6 @@ use Examyou\RestAPI\Exceptions\ApiException;
 class WarehouseController extends ApiBaseController
 {
     protected $model = Warehouse::class;
-
     protected $indexRequest = IndexRequest::class;
     protected $storeRequest = StoreRequest::class;
     protected $updateRequest = UpdateRequest::class;

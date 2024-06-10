@@ -90,8 +90,6 @@ const datatable = () => {
             url += `&filters=${encodeURIComponent(filterString)}`;
         }
 
-
-
         // Extra Filters
         // Used for sending as query params
         // like ?order_type=purchase
@@ -205,10 +203,8 @@ const datatable = () => {
         exportDetails,
         currentPage,
         hashable,
-
         handleTableChange,
         fetch,
-
         onTableSearch,
         onRowSelectChange,
     };

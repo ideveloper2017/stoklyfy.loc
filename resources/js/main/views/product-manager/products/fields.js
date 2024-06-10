@@ -138,6 +138,14 @@ const fields = () => {
 
     const filterableColumns = [
         {
+            key: "sku",
+            value: t("product.sku"),
+        },
+        {
+            key: "item_code",
+            value: t("product.item_code"),
+        },
+        {
             key: "name",
             value: t("product.name"),
         },

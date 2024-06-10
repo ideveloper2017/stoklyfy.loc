@@ -12,7 +12,7 @@ if ($appType == 'saas') {
     $routeArray['prefix'] = 'superadmin';
 }
 
-if ($appType == 'non-saas') {
+ if ($appType == 'non-saas') {
     $routeArray['middleware'] = ['api.permission.check', 'api.auth.check', 'license-expire'];
 } else {
     $routeArray['middleware'] = ['api.superadmin.check', 'license-expire'];
