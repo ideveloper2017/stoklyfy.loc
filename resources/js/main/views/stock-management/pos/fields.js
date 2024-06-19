@@ -22,7 +22,6 @@ const fields = () => {
         tax_id: undefined,
         category_id: undefined,
         brand_id: undefined,
-        tax_id: undefined,
         tax_rate: 0,
         tax_amount: 0,
         discount_type: "percentage",

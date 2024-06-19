@@ -137,7 +137,7 @@
                                         <a-col :xs="24" :sm="24" :md="24" :lg="24">
                                             <a-table
                                                 :row-key="(record) => record.xid"
-                                                :dataSource="selectedProducts"
+                                                :dataSource="selectedProducts.slice().reverse()"
                                                 :columns="orderItemColumns"
                                                 :pagination="false"
                                                 size="middle"
@@ -147,7 +147,7 @@
                                                         v-if="column.dataIndex === 'name'"
                                                     >
                                                         {{ record.name }} <br />
-                                                        <small>
+<!--                                                        <small>-->
 <!--                                                            <a-typography-text code>-->
 <!--                                                                {{-->
 <!--                                                                    $t("product.avl_qty")-->
@@ -156,7 +156,7 @@
 <!--                                                                    `${record.stock_quantity}${record.unit_short_name}`-->
 <!--                                                                }}-->
 <!--                                                            </a-typography-text>-->
-                                                        </small>
+<!--                                                        </small>-->
                                                     </template>
                                                     <template
                                                         v-if="
@@ -565,7 +565,7 @@
                                         <a-col :xs="24" :sm="24" :md="24" :lg="24">
                                             <a-table
                                                 :row-key="(record) => record.xid"
-                                                :dataSource="selectedProducts"
+                                                :dataSource="selectedProducts.slice().reverse()"
                                                 :columns="orderItemColumns"
                                                 :pagination="false"
                                                 size="middle"
@@ -1330,7 +1330,6 @@ export default {
                 tax_id: undefined,
                 category_id: undefined,
                 brand_id: undefined,
-                tax_id: undefined,
                 tax_rate: 0,
                 tax_amount: 0,
                 discount_value: 0,
