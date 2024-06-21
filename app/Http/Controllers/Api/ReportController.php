@@ -242,4 +242,12 @@ class ReportController extends ApiBaseController
             'profit_by_payment' => $profitByPayment,
         ];
     }
+
+    public function getWarehouseReport()
+    {
+        $request=request();
+
+        return [''];
+
+    }
 }

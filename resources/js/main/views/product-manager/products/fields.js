@@ -60,10 +60,10 @@ const fields = () => {
             title: t("product.product"),
             dataIndex: "name",
         },
-        // {
-        //     title: t("warehouse.warehouse"),
-        //     dataIndex: "warehouse_id",
-        // },
+        {
+            title: t("warehouse.warehouse"),
+            dataIndex: "warehouse_id",
+        },
         {
             title: t("product.category"),
             dataIndex: "category_id",
@@ -140,15 +140,15 @@ const fields = () => {
         {
             key: "sku",
             value: t("product.sku"),
+        }
+        ,{
+            key: "name",
+            value: t("product.name"),
         },
         {
             key: "item_code",
             value: t("product.item_code"),
-        },
-        {
-            key: "name",
-            value: t("product.name"),
-        },
+        }
     ];
 
     return {

@@ -1,32 +1,3 @@
-<script>
-import { useRouter } from "vue-router";
-import {onBeforeMount} from "vue";
-import common from "../../../../common/composable/common";
-import AdminPageHeader from "../../../../common/layouts/AdminPageHeader.vue";
-export default {
-    components: {
-        AdminPageHeader,
-    },
-    setup() {
-        const { permsArray } = common();
-        const router = useRouter();
-
-
-        onBeforeMount(() => {
-            if (
-                !(
-                    permsArray.value.includes("customers_view") ||
-                    permsArray.value.includes("suppliers_view") ||
-                    permsArray.value.includes("admin")
-                )
-            ) {
-                router.push("admin.dashboard.index");
-            }
-        });
-    }
-}
-</script>
-
 <template>
     <AdminPageHeader>
         <template #header>
@@ -40,12 +11,72 @@ export default {
                     </router-link>
                 </a-breadcrumb-item>
                 <a-breadcrumb-item>
-                    {{ $t(`menu.cash_bank`) }}
+                    {{ $t(`menu.warehouses-report`) }}
                 </a-breadcrumb-item>
             </a-breadcrumb>
         </template>
     </AdminPageHeader>
+
+    <admin-page-filters>
+        <a-row :gutter="[16, 16]" justify="end">
+            <a-col :xs="24" :sm="24" :md="12" :lg="6" :xl="4">
+                <DateRangePicker
+                    @dateTimeChanged="
+                        (changedDateTime) => {
+                            filters.dates = changedDateTime;
+                        }
+                    "
+                />
+            </a-col>
+            <a-col :span="24">
+
+            </a-col>
+        </a-row>
+    </admin-page-filters>
+    <admin-page-table-content>
+
+        <WarehouseSummary/>
+    </admin-page-table-content>
 </template>
+
+<script>
+import { useRouter } from "vue-router";
+import {defineComponent, onBeforeMount, reactive} from "vue";
+import common from "../../../../common/composable/common";
+import AdminPageHeader from "../../../../common/layouts/AdminPageHeader.vue";
+import DateRangePicker from "../../../../common/components/common/calendar/DateRangePicker.vue";
+import WarehouseSummary from "./WarehouseSummary.vue";
+export default defineComponent({
+    components: {
+        WarehouseSummary,
+        DateRangePicker,
+        AdminPageHeader,
+
+    },
+    setup() {
+        const { permsArray } = common();
+        const router = useRouter();
+        const filters = reactive({
+            dates: [],
+        });
+
+        onBeforeMount(() => {
+            if (
+                !(
+                    permsArray.value.includes("customers_view") ||
+                    permsArray.value.includes("suppliers_view") ||
+                    permsArray.value.includes("admin")
+                )
+            ) {
+                router.push("admin.dashboard.index");
+            }
+        });
+        return {
+             filters,
+        };
+    }
+});
+</script>
 
 <style scoped>
 

@@ -565,7 +565,7 @@
                                         <a-col :xs="24" :sm="24" :md="24" :lg="24">
                                             <a-table
                                                 :row-key="(record) => record.xid"
-                                                :dataSource="selectedProducts.slice().reverse()"
+                                                :dataSource="selectedProducts"
                                                 :columns="orderItemColumns"
                                                 :pagination="false"
                                                 size="middle"
@@ -1330,6 +1330,7 @@ export default {
                 tax_id: undefined,
                 category_id: undefined,
                 brand_id: undefined,
+                tax_id: undefined,
                 tax_rate: 0,
                 tax_amount: 0,
                 discount_value: 0,

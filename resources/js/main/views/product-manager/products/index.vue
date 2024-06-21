@@ -71,7 +71,7 @@
             </a-col>
             <a-col :xs="24" :sm="24" :md="12" :lg="14" :xl="14">
                 <a-row :gutter="[16, 16]" justify="end">
-                    <a-col :xs="24" :sm="24" :md="8" :lg="8" :xl="6">
+                    <a-col :xs="24" :sm="24" :md="10" :lg="10" :xl="10">
                         <a-input-search
                             v-model:value="table.searchString"
                             show-search
@@ -79,7 +79,7 @@
                             @search="onTableSearch"
                             style="width: 100%"
                             :loading="table.filterLoading"
-                            :placeholder="$t('common.search')"
+                            :placeholder="$t('product.search_scan_product')"
                         />
                     </a-col>
                     <a-col :xs="24" :sm="24" :md="8" :lg="8" :xl="6">

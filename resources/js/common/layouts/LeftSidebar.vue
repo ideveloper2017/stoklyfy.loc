@@ -554,6 +554,27 @@
                         </a-menu-item>
                         <a-menu-item
                             v-if="
+                                ((permsArray.includes('purchases_view') ||
+                                    permsArray.includes('sales_view') ||
+                                    permsArray.includes('purchase_returns_view') ||
+                                    permsArray.includes('sales_returns_view')) &&
+                                    permsArray.includes('order_payments_view')) ||
+                                permsArray.includes('admin')
+                            "
+                            @click="
+                                () => {
+                                    menuSelected();
+                                    $router.push({
+                                        name: 'admin.reports.warehouse.index',
+                                    });
+                                }
+                            "
+                            key="payments"
+                        >
+                            {{ $t("menu.warahouses-report") }}
+                        </a-menu-item>
+                        <a-menu-item
+                            v-if="
                                 permsArray.includes('products_view') ||
                                 permsArray.includes('admin')
                             "
