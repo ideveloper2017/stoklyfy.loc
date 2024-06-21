@@ -9,12 +9,23 @@ import RateList from '../views/reports/rate-list/index.vue';
 import ProductSalesSummary from '../views/reports/product-sales-summary/index.vue';
 import Expenses from '../views/reports/expenses/index.vue';
 import ProfitLoss from '../views/reports/profit-loss/index.vue';
+import WarehousesReport from "../views/reports/warehouses-report/index.vue";
 
 export default [
     {
         path: '/admin/reports/',
         component: () => import('../../common/layouts/Admin.vue'),
         children: [
+            {
+                path: 'warehouse-report',
+                component: WarehousesReport,
+                name: 'admin.reports.warehouse.index',
+                meta: {
+                    requireAuth: true,
+                    menuParent: "reports",
+                    menuKey: "warehouse_report",
+                }
+            },
             {
                 path: 'payments',
                 component: Payments,
