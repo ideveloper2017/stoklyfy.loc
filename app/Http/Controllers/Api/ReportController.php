@@ -6,8 +6,10 @@ use App\Http\Controllers\ApiBaseController;
 use App\Models\Expense;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\Product;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use DB;
 use Examyou\RestAPI\ApiResponse;
 
 class ReportController extends ApiBaseController
@@ -245,9 +247,12 @@ class ReportController extends ApiBaseController
 
     public function getWarehouseReport()
     {
-        $request=request();
-
-        return [''];
-
+        $product=Product::leftJoin('product_details','product_details.product_id','=','products.id')
+            ->leftJoin('warehouses','product_details.warehouse_id','=','warehouses.id')
+            ->select(['warehouses.name',DB::raw('sum(product_details.purchase_price) as purchase_price'),DB::raw('sum(product_details.sales_price) as sales_price'),DB::raw('sum(product_details.current_stock) as current_stock')])
+            ->where('product_details.current_stock','>',0)
+            ->groupBy('warehouses.id')
+            ->get();
+        return ApiResponse::make('Success',['products'=>$product]);
     }
 }
