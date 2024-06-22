@@ -1,45 +1,31 @@
 <template>
     <a-row>
         <a-col :span="24">
-<!--            <div v-if="!table.loading" class="table-responsive">-->
-<!--                <a-table-->
-<!--                    :columns="productColumns"-->
-<!--                    :row-key="(record) => record.xid"-->
-<!--                    :data-source="table.data"-->
-<!--                    :pagination="table.pagination"-->
-<!--                    :loading="table.loading"-->
-<!--                    @change="handleTableChange"-->
-<!--                    id="warehouse-reports-table"-->
-<!--                    bordered-->
-<!--                    size="middle"-->
-<!--                >-->
-<!--                    <template #bodyCell="{ column, record }">-->
-<!--                        <template v-if="column.dataIndex === 'date'">-->
-<!--                            {{ formatDate(record.date) }}-->
-<!--                        </template>-->
-<!--                        <template v-if="column.dataIndex === 'payment_type'">-->
-<!--                            {{-->
-<!--                                record.payment_type == "in"-->
-<!--                                    ? $t("menu.payment_in")-->
-<!--                                    : $t("menu.payment_out")-->
-<!--                            }}-->
-<!--                        </template>-->
-<!--                        <template v-if="column.dataIndex === 'mode_type'">-->
-<!--                            {{-->
-<!--                                record.payment_mode && record.payment_mode.name-->
-<!--                                    ? record.payment_mode.name-->
-<!--                                    : "-"-->
-<!--                            }}-->
-<!--                        </template>-->
-<!--                        <template v-if="column.dataIndex === 'user_id'">-->
-<!--                            <UserInfo :user="record.user" />-->
-<!--                        </template>-->
-<!--                        <template v-if="column.dataIndex === 'amount'">-->
-<!--                            {{ formatAmountCurrency(record.amount) }}-->
-<!--                        </template>-->
-<!--                    </template>-->
-<!--                </a-table>-->
-<!--            </div>-->
+
+            <div v-if="!table.loading" class="table-responsive">
+                <a-table
+                    :columns="productColumns"
+                    :row-key="(record) => record.xid"
+                    :data-source="table.data"
+                    :pagination="false"
+                    :loading="table.loading"
+                    @change="handleTableChange"
+                    id="warehouse-reports-table"
+                    bordered
+                    size="middle"
+                >
+                    <template #bodyCell="{ column, record }">
+                        <template v-if="column.dataIndex === 'purchase_price'">
+                            {{ formatAmountCurrency(record.purchase_price) }}
+                        </template>
+                        <template v-if="column.dataIndex === 'sales_price'">
+                            {{ formatAmountCurrency(record.sales_price) }}
+                        </template>
+
+
+                    </template>
+                </a-table>
+            </div>
         </a-col>
     </a-row>
 </template>
@@ -71,6 +57,7 @@ export default defineComponent({
                 console.log(response.data);
                 reportData.value=response.data.products;
             })
+            datatableVariables.table.data=reportData;
             // datatableVariables.tableUrl.value = {
             //     url:
             //         "",

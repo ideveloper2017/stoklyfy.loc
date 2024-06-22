@@ -32,10 +32,10 @@ const fields = () => {
     });
 
     const orderItemColumns = [
-        {
-            title: "#",
-            dataIndex: "sn",
-        },
+        // {
+        //     title: "#",
+        //     dataIndex: "sn",
+        // },
         {
             title: t("product.name"),
             dataIndex: "name",

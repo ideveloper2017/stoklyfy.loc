@@ -10,46 +10,26 @@ const fields=()=>{
 
     const productColumns = [
         {
-            title: t("payments.date"),
-            dataIndex: "date",
-            dbKey: "date",
-            dataFormat: (row) => {
-                return formatDate(row.date);
-            }
+            title: t("warehouse.name"),
+            dataIndex: "name",
+            dbKey: "name",
         },
         {
-            title: t("payments.payment_number"),
-            dataIndex: "payment_number",
-            dbKey: "payment_number",
+            title: t("product.purchase_price"),
+            dataIndex: "purchase_price",
+            dbKey: "purchase_price",
+
+        },     {
+            title: t("product.sales_price"),
+            dataIndex: "sales_price",
+            dbKey: "sales_price",
+
         },
         {
-            title: t("payments.payment_type"),
-            dataIndex: "payment_type",
-            dbKey: "payment_type",
-            dataFormat: (row) => {
-                return row.payment_type == "in"
-                    ? t("menu.payment_in")
-                    : t("menu.payment_out")
-            }
-        },
-        {
-            title: t("payments.user"),
-            dataIndex: "user_id",
-            dbKey: "user.name",
-        },
-        {
-            title: t("payment_mode.mode_type"),
-            dataIndex: "mode_type",
-            dbKey: "payment_mode.name",
-        },
-        {
-            title: t("payments.amount"),
-            dataIndex: "amount",
-            dbKey: "amount",
-            dataFormat: (row) => {
-                return formatAmountCurrency(row.amount);
-            }
-        },
+            title: t("product.current_stock"),
+            dataIndex: "current_stock",
+            dbKey: "current_stock",
+        }
     ];
 
     return {

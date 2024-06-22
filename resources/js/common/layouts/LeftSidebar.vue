@@ -569,9 +569,9 @@
                                     });
                                 }
                             "
-                            key="payments"
+                            key="warehouses-report"
                         >
-                            {{ $t("menu.warahouses-report") }}
+                            {{ $t("menu.warehouses-report") }}
                         </a-menu-item>
                         <a-menu-item
                             v-if="
