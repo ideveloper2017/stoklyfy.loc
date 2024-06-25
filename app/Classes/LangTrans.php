@@ -200,7 +200,8 @@ class LangTrans
              'pos_settings' => 'POS sozlamalari',
              'setup_company' => 'Kompaniyani o\'rnatish',
              'expense_reports' => 'Xarajatlar to\'g\'risida hisobot',
-             'variations' => 'Variatsiyalar'
+             'variations' => 'Variatsiyalar',
+             'warehouses-report'=>'Ombor xisoboti'
         ],
         'dashboard' => [
             'dashboard' => 'Boshqaruv paneli',
