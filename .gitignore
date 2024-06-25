@@ -20,8 +20,6 @@ yarn-error.log
 /public/js/*
 /public/uploads/*
 /public/build/*
-/Modules/*
-!/Modules
 .DS_Store
 /__MACOSX
 __MACOSX/*
