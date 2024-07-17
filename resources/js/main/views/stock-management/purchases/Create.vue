@@ -240,20 +240,10 @@
                             :row-key="(record) => record.xid"
                             :dataSource="selectedProducts.slice().reverse()"
                             :columns="orderItemColumns"
-                            :pagination="false"
-                        >
+                            :pagination="false">
                             <template #bodyCell="{ column, record }">
                                 <template v-if="column.dataIndex === 'name'">
                                     {{ record.name }}
-<!--                                    <br />-->
-<!--                                    <small>-->
-<!--                                        <a-typography-text code>-->
-<!--                                            {{ $t("product.avl_qty") }}-->
-<!--                                            {{-->
-<!--                                                `${record.stock_quantity}${record.unit_short_name}`-->
-<!--                                            }}-->
-<!--                                        </a-typography-text>-->
-<!--                                    </small>-->
                                 </template>
                                 <template v-if="column.dataIndex === 'unit_quantity'">
                                     <a-input-number
