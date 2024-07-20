@@ -21,6 +21,7 @@ use App\Models\Product;
 use App\Models\Settings;
 use App\Models\StaffMember;
 use App\Models\Translation;
+use App\Models\Unit;
 use App\Models\User;
 use App\Models\UserWarehouse;
 use App\Models\Warehouse;
@@ -196,7 +197,7 @@ class AuthController extends ApiBaseController
         $response['shortcut_menus'] = $addMenuSetting;
         $response['email_setting_verified'] = $this->emailSettingVerified();
         $response['visible_subscription_modules'] = Common::allVisibleSubscriptionModules();
-
+        $response['unit']=Unit::query()->get();
         return ApiResponse::make('Loggged in successfull', $response);
     }
 

@@ -164,7 +164,7 @@ export default {
 
         return {
             selectedWarehouse,
-            permsArray,
+           permsArray,
             appSetting,
             willSubscriptionModuleVisible,
             logout,

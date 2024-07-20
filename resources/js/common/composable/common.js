@@ -34,6 +34,7 @@ const common = () => {
     const selectedLang = computed(() => store.state.auth.lang);
     const user = computed(() => store.state.auth.user);
     const selectedWarehouse = computed(() => store.state.auth.warehouse);
+    // const selectedUnit=computed(store.state.auth.unit)
     const allWarehouses = computed(() => store.state.auth.all_warehouses);
     const frontAppSetting = computed(() => store.state.front.appSetting);
     const frontWarehouse = computed(() => {
@@ -500,6 +501,7 @@ const common = () => {
         appType,
         addMenus,
         selectedLang,
+
         user,
         selectedWarehouse,
         allWarehouses,

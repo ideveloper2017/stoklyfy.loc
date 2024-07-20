@@ -112,7 +112,7 @@
                         </a-col>
                     </a-row>
                     <a-row :gutter="16">
-                        <a-col :xs="24" :sm="24" :md="8" :lg="8">
+                        <a-col :xs="24" :sm="24" :md="12" :lg="12">
                             <a-form-item
                                 :label="$t('product.name')"
                                 name="name"
@@ -127,15 +127,17 @@
                                             $t('product.name'),
                                         ])
                                     "
+
                                     v-on:keyup="
                                         formData.slug = slugify($event.target.value)
                                     "
                                 />
                             </a-form-item>
                         </a-col>
-                        <a-col :xs="24" :sm="24" :md="8" :lg="8">
+                        <a-col :xs="24" :sm="24" :md="8" :lg="8"   style="display: none">
                             <a-form-item
                                 :label="$t('product.slug')"
+
                                 name="slug"
                                 :help="rules.slug ? rules.slug.message : null"
                                 :validateStatus="rules.slug ? 'error' : null"
@@ -151,7 +153,7 @@
                                 />
                             </a-form-item>
                         </a-col>
-                        <a-col :xs="24" :sm="24" :md="8" :lg="8">
+                        <a-col :xs="24" :sm="24" :md="12" :lg="12">
                             <a-form-item
                                 :label="$t('product.sku')"
                                 name="sku"
@@ -262,7 +264,7 @@
                                         "
                                         :allowClear="true"
                                         @change="
-                                            (value, option) => (selectedUnit = option)
+                                            (value, option) => (selectUnit = option)
                                         "
                                     >
                                         <a-select-option
@@ -395,8 +397,8 @@
                 }}
             </form-item-heading>
 
-            <a-row :gutter="16">
-                <a-col :xs="24" :sm="24" :md="6" :lg="6">
+            <a-row :gutter="16" >
+                <a-col :xs="24" :sm="24" :md="6" :lg="6" style="display: none" >
                     <a-form-item
                         :label="$t('product.tax')"
                         name="tax_id"
@@ -496,10 +498,10 @@
                             <template #addonBefore>
                                 {{ appSetting.currency.symbol }}
                             </template>
-                            <template #addonAfter>
+                            <template #addonAfter >
                                 <a-select
                                     v-model:value="formData.purchase_tax_type"
-                                    style="width: 120px"
+                                    style="width: 120px;display:none;"
                                 >
                                     <a-select-option value="inclusive">
                                         {{ $t("common.with_tax") }}
@@ -533,10 +535,10 @@
                             <template #addonBefore>
                                 {{ appSetting.currency.symbol }}
                             </template>
-                            <template #addonAfter>
+                            <template #addonAfter >
                                 <a-select
                                     v-model:value="formData.sales_tax_type"
-                                    style="width: 120px"
+                                    style="width: 120px;display:none;"
                                 >
                                     <a-select-option value="inclusive">
                                         {{ $t("common.with_tax") }}
@@ -612,57 +614,57 @@
                 </a-col>
             </a-row>
 
-            <form-item-heading>
-				{{ $t("product.wholesale_rate") }}
-			</form-item-heading>
-			<a-row :gutter="16">
-				<a-col :xs="24" :sm="24" :md="12" :lg="12">
-					<a-form-item
-						:label="$t('product.wholesale_price')"
-						name="wholesale_price"
-						:help="
-							rules.wholesale_price ? rules.wholesale_price.message : null
-						"
-						:validateStatus="rules.wholesale_price ? 'error' : null"
-					>
-						<a-input v-model:value="formData.wholesale_price" placeholder="0">
-							<template #addonAfter>
-								<span v-if="formData.sales_tax_type == 'inclusive'">
-									{{ $t("common.with_tax") }}
-								</span>
-								<span v-else>{{ $t("common.without_tax") }}</span>
-							</template>
-						</a-input>
-					</a-form-item>
-				</a-col>
-				<a-col :xs="24" :sm="24" :md="12" :lg="12">
-					<a-form-item
-						:label="$t('product.wholesale_quantity')"
-						name="wholesale_quantity"
-						:help="
-							rules.wholesale_quantity
-								? rules.wholesale_quantity.message
-								: null
-						"
-						:validateStatus="rules.wholesale_quantity ? 'error' : null"
-					>
-						<a-input
-							v-model:value="formData.wholesale_quantity"
-							:placeholder="$t('product.enter_min_quantity')"
-						>
-							<template #addonAfter>
-								{{
-									selectedUnit && selectedUnit.short_name
-										? selectedUnit.short_name
-										: ""
-								}}
-							</template>
-						</a-input>
-					</a-form-item>
-				</a-col>
-			</a-row>
+<!--            <form-item-heading>-->
+<!--				{{ $t("product.wholesale_rate") }}-->
+<!--			</form-item-heading>-->
+<!--			<a-row :gutter="16">-->
+<!--				<a-col :xs="24" :sm="24" :md="12" :lg="12">-->
+<!--					<a-form-item-->
+<!--						:label="$t('product.wholesale_price')"-->
+<!--						name="wholesale_price"-->
+<!--						:help="-->
+<!--							rules.wholesale_price ? rules.wholesale_price.message : null-->
+<!--						"-->
+<!--						:validateStatus="rules.wholesale_price ? 'error' : null"-->
+<!--					>-->
+<!--						<a-input v-model:value="formData.wholesale_price" placeholder="0">-->
+<!--							<template #addonAfter>-->
+<!--								<span v-if="formData.sales_tax_type == 'inclusive'">-->
+<!--									{{ $t("common.with_tax") }}-->
+<!--								</span>-->
+<!--								<span v-else>{{ $t("common.without_tax") }}</span>-->
+<!--							</template>-->
+<!--						</a-input>-->
+<!--					</a-form-item>-->
+<!--				</a-col>-->
+<!--				<a-col :xs="24" :sm="24" :md="12" :lg="12">-->
+<!--					<a-form-item-->
+<!--						:label="$t('product.wholesale_quantity')"-->
+<!--						name="wholesale_quantity"-->
+<!--						:help="-->
+<!--							rules.wholesale_quantity-->
+<!--								? rules.wholesale_quantity.message-->
+<!--								: null-->
+<!--						"-->
+<!--						:validateStatus="rules.wholesale_quantity ? 'error' : null"-->
+<!--					>-->
+<!--						<a-input-->
+<!--							v-model:value="formData.wholesale_quantity"-->
+<!--							:placeholder="$t('product.enter_min_quantity')"-->
+<!--						>-->
+<!--							<template #addonAfter>-->
+<!--								{{-->
+<!--									selectedUnit && selectedUnit.short_name-->
+<!--										? selectedUnit.short_name-->
+<!--										: ""-->
+<!--								}}-->
+<!--							</template>-->
+<!--						</a-input>-->
+<!--					</a-form-item>-->
+<!--				</a-col>-->
+<!--			</a-row>-->
 
-            <a-row>
+            <a-row style="display: none">
                 <a-col :xs="24" :sm="24" :md="24" :lg="24">
                     <a-form-item
                         :label="$t('product.description')"
@@ -784,7 +786,7 @@ export default defineComponent({
         const customFields = ref([]);
         const warehouses = ref([]);
         const customFieldsData = ref({});
-        const selectedUnit = ref({});
+        const selectedUnit = ref();
         const store = useStore();
         const brandsUrl = "brands?limit=10000";
         const categoriesUrl = "categories?limit=10000";
@@ -1079,6 +1081,9 @@ export default defineComponent({
 </script>
 
 <style>
+.invisible {
+    visibility: hidden;
+}
 .ant-calendar-picker {
     width: 100%;
 }

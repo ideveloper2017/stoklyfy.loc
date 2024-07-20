@@ -142,8 +142,10 @@ export default defineComponent({
                     );
 
                     if (appType == "non-saas") {
+                        store.dispatch('auth/updateAllUnits')
                         store.dispatch("auth/updateAllWarehouses");
                         store.commit("auth/updateWarehouse", response.user.warehouse);
+                        store.commit('auth/updateUnit',response.unit);
 
                         router.push({
                             name: "admin.dashboard.index",
@@ -170,8 +172,10 @@ export default defineComponent({
                                 "auth/updateAddMenus",
                                 response.shortcut_menus.credentials
                             );
+                            store.dispatch('auth/updateAllUnits')
                             store.dispatch("auth/updateAllWarehouses");
                             store.commit("auth/updateWarehouse", response.user.warehouse);
+                            store.commit('auth/updateUnit',response.unit);
                             router.push({
                                 name: "admin.dashboard.index",
                                 params: { success: true },

@@ -8,6 +8,8 @@ const GLOBAL_SETTINGS_KEY = 'global_settings';
 const PER_PAGE_ITEM = 'per_page_item';
 const ALL_LANGS = 'all_langs';
 const SELECTED_LANG = 'selected_lang';
+const ALL_UNITS='all_unit';
+const SELECT_UNIT='selected_unit';
 const PAGE_TITLE = 'page_title';
 const DARK_THEME = 'dark_theme';
 const ACTIVE_MODULES = 'active_modules';
@@ -49,6 +51,8 @@ export default {
             all_front_warehouses: getJSONFromLocalStorage(ALL_FRONT_WAREHOUSES) || [],
             allLangs: getJSONFromLocalStorage(ALL_LANGS) || [],
             lang: window.localStorage.getItem(SELECTED_LANG) || getDefaultLangKey(),
+            allUnits:getJSONFromLocalStorage(ALL_UNITS) || [],
+            unit:getJSONFromLocalStorage(SELECT_UNIT),
             token: window.localStorage.getItem(AUTH_TOKEN) || null,
             expires: window.localStorage.getItem(EXIPRES_KEY) || null,
             globalSetting: getJSONFromLocalStorage(GLOBAL_SETTINGS_KEY),
@@ -125,6 +129,10 @@ export default {
             state.lang = lang;
             window.localStorage.setItem(SELECTED_LANG, lang);
         },
+        updateUnit(state,unit){
+          state.unit=unit;
+          window.localStorage.setItem(SELECT_UNIT,unit);
+        },
         updatePageTitle(state, pageTitle) {
             state.pageTitle = pageTitle;
             window.localStorage.setItem(PAGE_TITLE, pageTitle);
@@ -152,6 +160,10 @@ export default {
         updateAllLangs(state, allLangs) {
             state.allLangs = allLangs;
             window.localStorage.setItem(ALL_LANGS, JSON.stringify(allLangs));
+        },
+        updateAllUnits(state,allUnits){
+            state.allUnits=allUnits;
+            window.localStorage.setItem(ALL_UNITS,JSON.stringify(allUnits));
         },
         updateMenuCollapsed(state, menuCollapsed) {
             state.menuCollapsed = menuCollapsed;
@@ -225,6 +237,14 @@ export default {
                 .catch(function (error) {
 
                 });
+        },
+
+        updateAllUnits(context) {
+            axiosAdmin.get('/units?limit=10000').then(function (response){
+                context.commit('updateAllUnits',response.data);
+            }).catch(function (error){
+
+            })
         },
         refreshToken(context) {
             const token = context.state.token;
