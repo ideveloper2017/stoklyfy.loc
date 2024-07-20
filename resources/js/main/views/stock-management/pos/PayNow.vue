@@ -44,6 +44,14 @@
                             "
                         />
                     </a-col>
+
+                    <a-col :span="24" class="mt-20">
+                        <a-statistic
+                            :title="$t('common.balance')"
+                            :value="0"
+                        />
+
+                    </a-col>
                 </a-row>
             </a-col>
             <a-col :xs="24" :sm="24" :md="16" :lg="16">

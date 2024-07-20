@@ -232,6 +232,39 @@
                             <div class="bill-footer">
                                 <a-row :gutter="[16, 16]">
                                     <a-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
+                                        <a-row
+                                            :gutter="16"
+                                            :style="{ background: '#dbdbdb', padding: '5px' }"
+                                        >
+                                            <a-col
+                                                :xs="24"
+                                                :sm="24"
+                                                :md="12"
+                                                :lg="12"
+                                                :xl="12"
+                                            >
+                                            <span class="pos-grand-total">
+                                                {{ $t("stock.grand_total") }} :
+                                            </span>
+                                            </a-col>
+                                            <a-col
+                                                :xs="24"
+                                                :sm="24"
+                                                :md="12"
+                                                :lg="12"
+                                                :xl="12"
+                                            >
+                                            <span class="pos-grand-total">
+                                                {{
+                                                    formatAmountCurrency(
+                                                        formData.subtotal
+                                                    )
+                                                }}
+                                            </span>
+                                            </a-col>
+                                        </a-row>
+                                    </a-col>
+                                    <a-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8" style="display: none">
                                         <a-form-item :label="$t('stock.order_tax')">
                                             <a-select
                                                 v-model:value="formData.tax_id"
@@ -322,39 +355,7 @@
                             }"
                         >
                             <a-row :gutter="16">
-                                <a-col :xs="24" :sm="24" :md="10" :lg="10" :xl="10">
-                                    <a-row
-                                        :gutter="16"
-                                        :style="{ background: '#dbdbdb', padding: '5px' }"
-                                    >
-                                        <a-col
-                                            :xs="24"
-                                            :sm="24"
-                                            :md="12"
-                                            :lg="12"
-                                            :xl="12"
-                                        >
-                                            <span class="pos-grand-total">
-                                                {{ $t("stock.grand_total") }} :
-                                            </span>
-                                        </a-col>
-                                        <a-col
-                                            :xs="24"
-                                            :sm="24"
-                                            :md="12"
-                                            :lg="12"
-                                            :xl="12"
-                                        >
-                                            <span class="pos-grand-total">
-                                                {{
-                                                    formatAmountCurrency(
-                                                        formData.subtotal
-                                                    )
-                                                }}
-                                            </span>
-                                        </a-col>
-                                    </a-row>
-                                </a-col>
+
                                 <a-col
                                     :xs="24"
                                     :sm="24"
