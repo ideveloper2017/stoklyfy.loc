@@ -699,7 +699,7 @@ class LangTrans
              'shipping' => 'Yetkazib berish',
              'grand_total' => 'Jami',
              'remarks' => 'Izohlar',
-             'pay_now' => 'Hozir to\'lash',
+             'pay_now' => 'To\'lov',
              'reset' => 'Tozalash',
              'total_items' => 'Jami elementlar',
              'paying_amount' => 'To\'lov summasi',

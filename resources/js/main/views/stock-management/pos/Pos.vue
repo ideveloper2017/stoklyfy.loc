@@ -231,39 +231,7 @@
                         <a-card>
                             <div class="bill-footer">
                                 <a-row :gutter="[16, 16]">
-                                    <a-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
-                                        <a-row
-                                            :gutter="16"
-                                            :style="{ background: '#dbdbdb', padding: '5px' }"
-                                        >
-                                            <a-col
-                                                :xs="24"
-                                                :sm="24"
-                                                :md="12"
-                                                :lg="12"
-                                                :xl="12"
-                                            >
-                                            <span class="pos-grand-total">
-                                                {{ $t("stock.grand_total") }} :
-                                            </span>
-                                            </a-col>
-                                            <a-col
-                                                :xs="24"
-                                                :sm="24"
-                                                :md="12"
-                                                :lg="12"
-                                                :xl="12"
-                                            >
-                                            <span class="pos-grand-total">
-                                                {{
-                                                    formatAmountCurrency(
-                                                        formData.subtotal
-                                                    )
-                                                }}
-                                            </span>
-                                            </a-col>
-                                        </a-row>
-                                    </a-col>
+
                                     <a-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8" style="display: none">
                                         <a-form-item :label="$t('stock.order_tax')">
                                             <a-select
@@ -340,6 +308,17 @@
                                             </a-input-number>
                                         </a-form-item>
                                     </a-col>
+                                    <a-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
+                                        <a-form-item :label="$t('stock.grand_total')">
+                                            <span class="pos-grand-total">
+                                                {{
+                                                    formatAmountCurrency(
+                                                        formData.subtotal
+                                                    )
+                                                }}
+                                            </span>
+                                        </a-form-item>
+                                    </a-col>
                                 </a-row>
                             </div>
                         </a-card>
@@ -359,22 +338,23 @@
                                 <a-col
                                     :xs="24"
                                     :sm="24"
-                                    :md="6"
-                                    :lg="6"
-                                    :xl="6"
+                                    :md="12"
+                                    :lg="12"
+                                    :xl="12"
                                     class="mt-10"
                                 >
-                                    <small>
-                                        {{ $t("product.tax") }} :
-                                        {{ formatAmountCurrency(formData.tax_amount) }} |
+
+<!--                                        {{ $t("product.tax") }} :-->
+<!--                                        {{ formatAmountCurrency(formData.tax_amount) }} |-->
                                         {{ $t("product.discount") }} :
                                         {{ formatAmountCurrency(formData.discount) }}
-                                    </small>
+
                                 </a-col>
                                 <a-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
                                     <a-space>
                                         <a-button
                                             type="primary"
+                                            size="large"
                                             @click="payNow"
                                             :disabled="
                                                 formData.subtotal <= 0 ||
@@ -385,7 +365,7 @@
                                         >
                                             {{ $t("stock.pay_now") }}
                                         </a-button>
-                                        <a-button @click="resetPos">
+                                        <a-button @click="resetPos" size="large">
                                             {{ $t("stock.reset") }}
                                         </a-button>
                                     </a-space>
@@ -960,6 +940,7 @@
     />
 
     <InvoiceModal
+        :customer="customers"
         :visible="printInvoiceModalVisible"
         :order="printInvoiceOrder"
         @closed="printInvoiceModalVisible = false"
@@ -1021,7 +1002,9 @@ export default {
             posDefaultCustomer,
         } = fields();
 
+
         const selectedProducts = ref([]);
+        const selectedCustomerId=ref();
         const selectedProductIds = ref([]);
         const removedOrderItemsIds = ref([]);
         const postLayout = ref(1);
@@ -1103,6 +1086,17 @@ export default {
                 }
             });
         };
+
+        const searchValueCustomer=(value,option)=>{
+            const newCustomer=option.customer;
+            selectedCustomer(newCustomer)
+        }
+
+        const selectedCustomer=(newCustomer)=>{
+            if (!includes(selectedCustomerId.value,newCustomer.xid)){
+                selectedCustomerId.value=newCustomer.xid;
+            }
+        }
 
         const searchValueSelected = (value, option) => {
             const newProduct = option.product;

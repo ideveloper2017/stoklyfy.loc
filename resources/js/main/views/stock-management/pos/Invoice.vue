@@ -24,10 +24,10 @@
                     <h4 style="margin-bottom: 0px">
                         {{ $t("common.phone") }}: {{ selectedWarehouse.phone }}
                     </h4>
-                    <h4>{{ $t("common.email") }}: {{ selectedWarehouse.email }}</h4>
+<!--                    <h4>{{ $t("common.email") }}: {{ selectedWarehouse.email }}</h4>-->
                 </div>
                 <div class="tax-invoice-details">
-                    <h3 class="tax-invoice-title">{{ $t("sales.tax_invoice") }}</h3>
+<!--                    <h3 class="tax-invoice-title">{{ $t("sales.tax_invoice") }}</h3>-->
                     <table class="invoice-customer-details">
                         <tr>
                             <td style="width: 50%">
@@ -63,16 +63,16 @@
                             >
                                 {{ $t("common.qty") }}
                             </td>
-                            <td
-                                v-if="selectedWarehouse.show_mrp_on_invoice"
-                                :style="{
-                                    width: selectedWarehouse.show_mrp_on_invoice
-                                        ? '20%'
-                                        : '20%',
-                                }"
-                            >
-                                {{ $t("product.mrp") }}
-                            </td>
+<!--                            <td-->
+<!--                                v-if="selectedWarehouse.show_mrp_on_invoice"-->
+<!--                                :style="{-->
+<!--                                    width: selectedWarehouse.show_mrp_on_invoice-->
+<!--                                        ? '20%'-->
+<!--                                        : '20%',-->
+<!--                                }"-->
+<!--                            >-->
+<!--                                {{ $t("product.mrp") }}-->
+<!--                            </td>-->
                             <td
                                 :style="{
                                     width: selectedWarehouse.show_mrp_on_invoice
@@ -102,15 +102,15 @@
                                 <td>{{ index + 1 }}</td>
                                 <td>{{ item.product.name }}</td>
                                 <td>{{ item.quantity + "" + item.unit.short_name }}</td>
-                                <td v-if="selectedWarehouse.show_mrp_on_invoice">
-                                    {{ item.mrp ? formatAmountCurrency(item.mrp) : "-" }}
-                                </td>
+<!--                                <td v-if="selectedWarehouse.show_mrp_on_invoice">-->
+<!--                                    {{ item.mrp ? formatAmountCurrency(item.mrp) : "-" }}-->
+<!--                                </td>-->
                                 <td>{{ formatAmountCurrency(item.unit_price) }}</td>
                                 <td style="text-align: right">
                                     {{ formatAmountCurrency(item.subtotal) }}
                                 </td>
                             </tr>
-                            <tr class="item-row-other">
+                            <tr class="item-row-other" style="display: none">
                                 <td
                                     :colspan="
                                         selectedWarehouse.show_mrp_on_invoice ? 4 : 3
@@ -136,19 +136,19 @@
                                     {{ formatAmountCurrency(order.discount) }}
                                 </td>
                             </tr>
-                            <tr class="item-row-other">
-                                <td
-                                    :colspan="
-                                        selectedWarehouse.show_mrp_on_invoice ? 4 : 3
-                                    "
-                                    style="text-align: right"
-                                >
-                                    {{ $t("stock.shipping") }}
-                                </td>
-                                <td colspan="2" style="text-align: right">
-                                    {{ formatAmountCurrency(order.shipping) }}
-                                </td>
-                            </tr>
+<!--                            <tr class="item-row-other">-->
+<!--                                <td-->
+<!--                                    :colspan="-->
+<!--                                        selectedWarehouse.show_mrp_on_invoice ? 4 : 3-->
+<!--                                    "-->
+<!--                                    style="text-align: right"-->
+<!--                                >-->
+<!--                                    {{ $t("stock.shipping") }}-->
+<!--                                </td>-->
+<!--                                <td colspan="2" style="text-align: right">-->
+<!--                                    {{ formatAmountCurrency(order.shipping) }}-->
+<!--                                </td>-->
+<!--                            </tr>-->
                         </tbody>
                     </table>
                 </div>
@@ -188,7 +188,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div>
+                <div style="display: none">
                     <table style="width: 100%">
                         <tr style="text-align: center">
                             <td style="width: 100%">
@@ -234,7 +234,7 @@
                 <div
                     v-if="selectedWarehouse.show_discount_tax_on_invoice"
                     class="discount-details"
-                >
+               style="display:none;" >
                     <p>
                         {{ $t("invoice.total_discount_on_mrp") }} :
                         {{ formatAmountCurrency(order.saving_on_mrp) }}
@@ -248,15 +248,15 @@
                         {{ formatAmountCurrency(order.total_tax_on_items) }}
                     </p>
                 </div>
-                <div class="barcode-details">
-                    <BarcodeGenerator
-                        :value="order.invoice_number + ''"
-                        :height="25"
-                        :width="1"
-                        :fontSize="15"
-                        :elementTag="'svg'"
-                    />
-                </div>
+<!--                <div class="barcode-details">-->
+<!--                    <BarcodeGenerator-->
+<!--                        :value="order.invoice_number + ''"-->
+<!--                        :height="25"-->
+<!--                        :width="1"-->
+<!--                        :fontSize="15"-->
+<!--                        :elementTag="'svg'"-->
+<!--                    />-->
+<!--                </div>-->
                 <div class="thanks-details">
                     <h3>{{ $t("invoice.thanks_message") }}</h3>
                 </div>
@@ -284,7 +284,7 @@ import BarcodeGenerator from "../../../../common/components/barcode/BarcodeGener
 const posInvoiceCssUrl = window.config.pos_invoice_css;
 
 export default defineComponent({
-    props: ["visible", "order"],
+    props: ["visible", "order","customer"],
     emits: ["closed", "success"],
     components: {
         PrinterOutlined,
