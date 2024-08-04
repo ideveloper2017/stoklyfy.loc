@@ -50,12 +50,14 @@
                                                 style="width: 100%"
                                                 optionFilterProp="title"
                                                 show-search
+                                                @select="searchValueCustomer"
                                             >
                                                 <a-select-option
                                                     v-for="customer in customers"
                                                     :key="customer.xid"
                                                     :title="customer.name"
-                                                    :value="customer.xid"
+                                                    :value="customer.id"
+                                                    :customer="customer"
                                                 >
                                                     {{ customer.name }}
                                                     <span
@@ -65,7 +67,7 @@
                                                         "
                                                     >
                                                         <br />
-                                                        {{ customer.phone }}
+                                                        {{ customer.phone }} {{ formatAmountCurrency(customer.details.due_amount)}}
                                                     </span>
                                                 </a-select-option>
                                             </a-select>
@@ -117,7 +119,7 @@
                                                     :label="product.name"
                                                     :product="product"
                                                 >
-                                                    => {{ product.name }}
+                                                    {{ product.name }}
                                                 </a-select-option>
                                             </a-select>
                                         </span>
@@ -461,6 +463,7 @@
                                                     :key="customer.xid"
                                                     :title="customer.name"
                                                     :value="customer.xid"
+
                                                 >
                                                     {{ customer.name }}
                                                 </a-select-option>
@@ -937,10 +940,11 @@
         @success="payNowSuccess"
         :data="formData"
         :selectedProducts="selectedProducts"
+        :customer="selectCustomer"
     />
 
     <InvoiceModal
-        :customer="customers"
+        :customer="selectCustomer"
         :visible="printInvoiceModalVisible"
         :order="printInvoiceOrder"
         @closed="printInvoiceModalVisible = false"
@@ -1004,7 +1008,7 @@ export default {
 
 
         const selectedProducts = ref([]);
-        const selectedCustomerId=ref();
+        const selectCustomer=ref();
         const selectedProductIds = ref([]);
         const removedOrderItemsIds = ref([]);
         const postLayout = ref(1);
@@ -1089,18 +1093,20 @@ export default {
 
         const searchValueCustomer=(value,option)=>{
             const newCustomer=option.customer;
-            selectedCustomer(newCustomer)
+            selectedCustomer(newCustomer);
         }
 
         const selectedCustomer=(newCustomer)=>{
-            if (!includes(selectedCustomerId.value,newCustomer.xid)){
-                selectedCustomerId.value=newCustomer.xid;
+            if (!includes(customers.value,newCustomer.xid)){
+                selectCustomer.value=newCustomer;
+                console.log(selectCustomer);
             }
         }
 
         const searchValueSelected = (value, option) => {
             const newProduct = option.product;
             selectSaleProduct(newProduct);
+            console.log(newProduct);
         };
 
         const selectSaleProduct = (newProduct) => {
@@ -1421,10 +1427,11 @@ export default {
             fetchProducts,
             searchValueSelected,
             selectedProducts,
+            searchValueCustomer,
             orderItemColumns,
             formatAmount,
             formatAmountCurrency,
-
+            selectCustomer,
             containerStyle: {
                 height: window.innerHeight - 110 + "px",
                 overflow: "scroll",

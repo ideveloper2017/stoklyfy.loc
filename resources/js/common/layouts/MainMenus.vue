@@ -160,7 +160,13 @@
 			</a-menu-item>
 		</a-sub-menu>
 
+        <a-menu-item 	key="stock_adjustment">
+            <CalculatorOutlined />
+            <span>{{ $t("menu.warehouse") }}</span>
+        </a-menu-item>
+
 		<a-menu-item
+
 			@click="
 				() => {
 					menuSelected();

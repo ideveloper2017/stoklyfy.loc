@@ -44,11 +44,24 @@
                             "
                         />
                     </a-col>
-
                     <a-col :span="24" class="mt-20">
                         <a-statistic
                             :title="$t('common.balance')"
-                            :value="0"
+                            :value=" formatAmountCurrency(customer.details.due_amount)"
+                            :value-style="{ color: (customer.details.due_amount)>0?'blue':'red' }"
+                        />
+
+                    </a-col>
+
+                    <a-col :span="24" class="mt-20">
+                        <a-statistic
+                            :title="$t('common.total_balance')"
+                            :value=" formatAmountCurrency(totalEnteredAmount <= data.subtotal
+      ? customer.details.due_amount + (data.subtotal - totalEnteredAmount)
+      : customer.details.due_amount-(totalEnteredAmount - data.subtotal))"
+                            :value-style="{ color: (totalEnteredAmount <= data.subtotal
+      ? customer.details.due_amount + (data.subtotal - totalEnteredAmount)
+      : customer.details.due_amount-(totalEnteredAmount - data.subtotal))>0?'blue':'red' }"
                         />
 
                     </a-col>
@@ -225,7 +238,7 @@ import common from "../../../../common/composable/common";
 import apiAdmin from "../../../../common/composable/apiAdmin";
 
 export default {
-    props: ["visible", "data", "selectedProducts"],
+    props: ["visible", "data", "selectedProducts","customer"],
     emits: ["closed", "success"],
     components: {
         CheckOutlined,
@@ -238,11 +251,13 @@ export default {
         const { addEditRequestAdmin, loading, rules } = apiAdmin();
         const { appSetting, formatAmountCurrency } = common();
         const paymentModes = ref([]);
+
         const formData = ref({
             payment_mode_id: undefined,
             amount: 0,
             notes: "",
         });
+        console.log(props.customer)
         const { t } = useI18n();
         const allPaymentRecords = ref([]);
         const paymentRecordsColumns = ref([
@@ -346,6 +361,12 @@ export default {
 
             allPaymentRecords.value = newResult;
         };
+
+
+        const totalBalance=computed(()=>{
+
+
+        });
 
         const totalEnteredAmount = computed(() => {
             var allPaymentSum = sumBy(allPaymentRecords.value, (newPaymentAmount) => {

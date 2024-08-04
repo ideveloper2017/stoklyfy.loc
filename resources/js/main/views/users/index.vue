@@ -316,7 +316,6 @@ export default {
         onMounted(() => {
             setUrlData();
             crudVariables.table.filterableColumns = filterableColumns;
-
             setFormData();
         });
 
