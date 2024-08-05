@@ -190,13 +190,13 @@
                 <div class="paid-amount-deatils">
                     <table style="width: 100%">
                         <thead style="background: #eee">
-                        <td style="width: 50%">{{ $t("payments.paid_amount") }}</td>
-                        <td style="width: 50%">{{ $t("payments.due_amount") }}</td>
+                        <td style="width: 50%">{{ $t("common.balance") }}</td>
+                        <td style="width: 50%">{{ $t("common.total_balance") }}</td>
                         </thead>
                         <tbody>
                         <tr class="paid-amount-row">
-                            <td>{{ formatAmountCurrency(order.paid_amount) }}</td>
-                            <td>{{ formatAmountCurrency(order.due_amount) }}</td>
+                            <td>{{ formatAmountCurrency(customer.details.due_amount) }}</td>
+                            <td>{{ formatAmountCurrency(order.paid_amount>0?customer.details.due_amount+order.due_amount:customer.details.due_amount-order.due_amount) }}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -297,7 +297,7 @@ import BarcodeGenerator from "../../../../common/components/barcode/BarcodeGener
 const posInvoiceCssUrl = window.config.pos_invoice_css;
 
 export default defineComponent({
-    props: ["visible", "order","customer"],
+    props: ["visible", "order","customer",'total'],
     emits: ["closed", "success"],
     components: {
         PrinterOutlined,
