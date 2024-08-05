@@ -75,11 +75,11 @@ export default defineComponent({
 		};
 
 		const getCategoryName = (cateogryName) => {
-			if (cateogryName.length > 9) {
-				return cateogryName.substring(0, 8) + "..";
-			} else {
+			// if (cateogryName.length > 9) {
+			// 	return cateogryName.substring(0, 8) + "..";
+			// } else {
 				return cateogryName;
-			}
+			// }
 		};
 
 		return {
@@ -100,11 +100,11 @@ export default defineComponent({
 	background: #fff;
 	border: 3px solid #e8e8e8;
 	display: inline-block;
-	margin-right: 15px;
+	//margin-right: 15px;
 	text-align: center;
 	border-radius: 5px;
 	margin-bottom: 5px;
-	width: 80px;
+	width: 100px;
 	height: 80px;
 	cursor: pointer;
 }

@@ -97,8 +97,7 @@
                             <tr
                                 class="item-row"
                                 v-for="(item, index) in order.items"
-                                :key="item.xid"
-                            >
+                                :key="item.xid">
                                 <td>{{ index + 1 }}</td>
                                 <td>{{ item.product.name }}</td>
                                 <td>{{ item.quantity + "" + item.unit.short_name }}</td>
@@ -185,6 +184,20 @@
                                 <td>{{ formatAmountCurrency(order.paid_amount) }}</td>
                                 <td>{{ formatAmountCurrency(order.due_amount) }}</td>
                             </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="paid-amount-deatils">
+                    <table style="width: 100%">
+                        <thead style="background: #eee">
+                        <td style="width: 50%">{{ $t("payments.paid_amount") }}</td>
+                        <td style="width: 50%">{{ $t("payments.due_amount") }}</td>
+                        </thead>
+                        <tbody>
+                        <tr class="paid-amount-row">
+                            <td>{{ formatAmountCurrency(order.paid_amount) }}</td>
+                            <td>{{ formatAmountCurrency(order.due_amount) }}</td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>

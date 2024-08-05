@@ -61,12 +61,13 @@ export default {
 		align-items: center;
 		justify-content: center;
 		height: 15px;
-		top: 1px;
-		background-color: #fff;
-		padding: 0 6px;
-		left: 1px;
-		left: 20px;
-		top: 30px;
+
+		background-color: #6571ff!important;
+        padding: .25em .4em;
+		left:18px;
+		top: 19px;
+        color: #fff;
+        border-radius: 4px;
 	}
 
 	img {

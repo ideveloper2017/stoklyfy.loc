@@ -401,14 +401,14 @@
                         @changed="reFetchProducts"
                     />
 
-                    <a-row v-if="productLists.length > 0" :gutter="30">
+                    <a-row v-if="productLists.length > 0">
                         <a-col
                             v-for="item in productLists"
                             :key="item.xid"
-                            :xxl="6"
-                            :lg="6"
-                            :md="12"
-                            :xs="24"
+                            :xxl="4"
+                            :lg="4"
+                            :md="10"
+                            :xs="22"
                             @click="selectSaleProduct(item)"
                         >
                             <ProductCardNew :product="item" />
@@ -1011,7 +1011,7 @@ export default {
         const selectCustomer=ref();
         const selectedProductIds = ref([]);
         const removedOrderItemsIds = ref([]);
-        const postLayout = ref(1);
+        const postLayout = ref(2);
 
         const state = reactive({
             orderSearchTerm: undefined,
