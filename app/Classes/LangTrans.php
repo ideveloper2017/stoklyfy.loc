@@ -682,6 +682,7 @@ class LangTrans
             'edit' => 'Edit Variation',
             'add_variation_message' => 'Select Variant and Variant Type From Below Dropdown and Then Click on + Add Variation Button',
             'single_type_product' => 'Single Type Product',
+            'weight_type_product' => 'Single Type Product',
             'variant_type_product' => 'Variant Type Product',
             'variation' => 'Variation',
             'variant_value' => 'Variant Value',
