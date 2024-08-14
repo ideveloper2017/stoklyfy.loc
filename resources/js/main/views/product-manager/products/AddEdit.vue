@@ -27,7 +27,7 @@
                                 {{ $t("variations.single_type_product") }}
                             </a-select-option>
                             <a-select-option value="weight">
-                                {{ $t("variations.single_type_product") }}
+                                {{ $t("variations.weight_type_product") }}
                             </a-select-option>
                             <a-select-option value="variable">
                                 {{ $t("variations.variant_type_product") }}
