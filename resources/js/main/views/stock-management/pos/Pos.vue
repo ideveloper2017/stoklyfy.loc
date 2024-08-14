@@ -890,6 +890,7 @@
             <a-row :gutter="16">
                 <a-col :xs="24" :sm="24" :md="24" :lg="24">
                     <a-form-item
+
                         :label="$t('product.tax_type')"
                         name="tax_type"
                         :help="

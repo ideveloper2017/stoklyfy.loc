@@ -247,8 +247,8 @@
                         <a-col
                             :xs="24"
                             :sm="24"
-                            :md="formData.product_type == 'single' ? 12 : 24"
-                            :lg="formData.product_type == 'single' ? 12 : 24"
+                            :md="((formData.product_type == 'single') || (formData.product_type == 'weight')) ? 12 : 24"
+                            :lg="((formData.product_type == 'single') || (formData.product_type == 'weight')) ? 12 : 24"
                         >
                             <a-form-item
                                 :label="$t('product.unit')"
@@ -284,7 +284,7 @@
                             </a-form-item>
                         </a-col>
                         <a-col
-                            v-if="formData.product_type == 'single'"
+                            v-if="((formData.product_type == 'single') || (formData.product_type == 'weight'))"
                             :xs="24"
                             :sm="24"
                             :md="12"
@@ -384,6 +384,19 @@
                                             :barcodeSymbology="formData.barcode_symbology"
                                             v-else
                                         />
+
+                                        <a-button
+                                            v-if="formData.item_code == ''"
+                                            type="text"
+                                            size="small"
+                                            @click="generatePLUBarCode"
+                                        >
+                                            <template #icon>
+                                                <BarcodeOutlined />
+                                            </template>
+                                            {{ $t("product.generate_plucode") }}
+                                        </a-button>
+
                                     </template>
                                 </a-input>
                             </a-form-item>
@@ -394,7 +407,7 @@
 
             <form-item-heading>
                 {{
-                    formData.product_type == "single"
+                    ((formData.product_type == "single") || (formData.product_type == "weight"))
                         ? $t("product.price_tax")
                         : $t("product.variant_details")
                 }}
@@ -433,7 +446,7 @@
                     :sm="24"
                     :md="6"
                     :lg="6"
-                    v-if="formData.product_type == 'single'"
+                    v-if="((formData.product_type == 'single') || (formData.product_type == 'weight'))"
                 >
                     <a-form-item
                         :label="$t('product.opening_stock')"
@@ -457,7 +470,7 @@
                     :sm="24"
                     :md="6"
                     :lg="6"
-                    v-if="formData.product_type == 'single'"
+                    v-if="((formData.product_type == 'single') || (formData.product_type == 'weight'))"
                 >
                     <a-form-item
                         :label="$t('product.opening_stock_date')"
@@ -479,7 +492,7 @@
                 </a-col>
             </a-row>
 
-            <a-row :gutter="16" v-if="formData.product_type == 'single'">
+            <a-row :gutter="16"  v-if="((formData.product_type == 'single') || (formData.product_type == 'weight'))">
                 <a-col :xs="24" :sm="24" :md="8" :lg="8">
                     <a-form-item
                         :label="$t('product.purchase_price')"
@@ -895,6 +908,10 @@ export default defineComponent({
             props.formData.item_code = parseInt(Math.random() * 10000000000);
         };
 
+        const generatePLUBarCode = () => {
+            props.formData.item_code = '2'+parseInt(Math.random() * 10000000000);
+        };
+
         const onSubmit = (sbumitType = "add-edit") => {
             const newData = {
                 ...props.formData,
@@ -1057,7 +1074,7 @@ export default defineComponent({
             selectedWarehouse,
             slugify,
             generateBarCode,
-
+            generatePLUBarCode,
             drawerWidth: window.innerWidth <= 991 ? "90%" : "70%",
             appSetting,
 

@@ -657,6 +657,7 @@ class LangTrans
              'shtrix kod' => 'shtrix kod',
              'view_barcode' => 'Shtrix-kodni ko\'rish',
              'generate_barcode' => 'Shtrix kod yaratish',
+             'generate_plucode' => 'Shtrix PLU kod yaratish',
              'print_barcode' => 'Shtrix-kodni chop etish',
              'price_tax' => 'Narx va soliq',
              'variant_details' => 'Variantlar tafsilotlari',
