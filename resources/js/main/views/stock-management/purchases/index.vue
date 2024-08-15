@@ -189,6 +189,7 @@ export default {
         });
 
         const fetchUsers = () => {
+
             const usersPromise = axiosAdmin.get(
                 `${orderPageObject.value.userType}?limit=10000`
             );

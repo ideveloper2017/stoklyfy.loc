@@ -77,6 +77,10 @@ const fields = () => {
 
     const orderItemDetailsColumns = [
         {
+            title: t("product.category"),
+            dataIndex: "category_id",
+        },
+        {
             title: t("product.product"),
             dataIndex: "product_id",
         },
@@ -202,6 +206,10 @@ const fields = () => {
 
         columns.value = [
             ...allColumns,
+            {
+                title: t("product.quantity"),
+                dataIndex: "quantity",
+            },
             {
                 title: t(`${pageObject.value.langKey}.${pageObject.value.langKey}_status`),
                 dataIndex: "order_status",

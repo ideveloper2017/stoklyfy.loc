@@ -160,6 +160,22 @@
                             </span>
                         </template>
                     </a-tab-pane>
+                    <a-tab-pane key="weight">
+                        <template #tab>
+                            <span>
+                                <ClusterOutlined />
+                                {{ $t("variations.weight_type_product") }}
+                            </span>
+                        </template>
+                    </a-tab-pane>
+                    <a-tab-pane key="service">
+                        <template #tab>
+                            <span>
+                                <ClusterOutlined />
+                                {{ $t("variations.service_type_product") }}
+                            </span>
+                        </template>
+                    </a-tab-pane>
                     <a-tab-pane key="variable">
                         <template #tab>
                             <span>
@@ -168,6 +184,8 @@
                             </span>
                         </template>
                     </a-tab-pane>
+
+
                 </a-tabs>
             </a-col>
         </a-row>
@@ -465,6 +483,16 @@ export default {
         const setUrlData = () => {
             var url =
                 "products?fields=id,xid,name,slug,product_type,barcode_symbology,sku,item_code,image,image_url,category_id,x_category_id,category{id,xid,name},brand_id,x_brand_id,brand{id,xid,name},unit_id,x_unit_id,unit{id,xid,name,short_name},description,details{stock_quantitiy_alert,opening_stock,opening_stock_date,wholesale_price,wholesale_quantity,mrp,purchase_price,sales_price,tax_id,x_tax_id,purchase_tax_type,sales_tax_type,current_stock,warehouse_id,x_warehouse_id,status},details:tax{id,xid,name,rate},details:warehouse{id,xid,name},customFields{id,xid,field_name,field_value},warehouse_id,x_warehouse_id,warehouse{id,xid}";
+
+            if (productType.value == "weight") {
+                url =
+                    "products?fields=id,xid,name,product_type,slug,barcode_symbology,sku,item_code,image,image_url,category_id,x_category_id,category{id,xid,name},brand_id,x_brand_id,brand{id,xid,name},unit_id,x_unit_id,unit{id,xid,name,short_name},description,details{stock_quantitiy_alert,opening_stock,opening_stock_date,wholesale_price,wholesale_quantity,mrp,purchase_price,sales_price,tax_id,x_tax_id,purchase_tax_type,sales_tax_type,current_stock,warehouse_id,x_warehouse_id,status},details:tax{id,xid,name,rate},details:warehouse{id,xid,name},customFields{id,xid,field_name,field_value},warehouse_id,x_warehouse_id,warehouse{id,xid},parent_id,x_parent_id,variations.limit(10000).offset(0){id,xid,name,slug,item_code,product_type,barcode_symbology,item_code,image,image_url,category_id,x_category_id,unit_id,x_unit_id,brand_id,x_brand_id},variations:productVariations{id,xid,product_id,x_product_id,variant_id,x_variant_id,variant_value_id,x_variant_value_id},variations:category{id,xid,name},variations:brand{id,xid,name},variations:unit{id,xid,name,short_name},variations:productVariations:variation{id,xid,name},variations:productVariations:variationType{id,xid,name},variations:details{stock_quantitiy_alert,opening_stock,opening_stock_date,wholesale_price,wholesale_quantity,mrp,purchase_price,sales_price,tax_id,x_tax_id,purchase_tax_type,sales_tax_type,current_stock,warehouse_id,x_warehouse_id,status},variations:details:tax{id,xid,name,rate},variations:details:warehouse{id,xid,name}";
+            }
+
+            if (productType.value == "service") {
+                url =
+                    "products?fields=id,xid,name,product_type,slug,barcode_symbology,sku,item_code,image,image_url,category_id,x_category_id,category{id,xid,name},brand_id,x_brand_id,brand{id,xid,name},unit_id,x_unit_id,unit{id,xid,name,short_name},description,details{stock_quantitiy_alert,opening_stock,opening_stock_date,wholesale_price,wholesale_quantity,mrp,purchase_price,sales_price,tax_id,x_tax_id,purchase_tax_type,sales_tax_type,current_stock,warehouse_id,x_warehouse_id,status},details:tax{id,xid,name,rate},details:warehouse{id,xid,name},customFields{id,xid,field_name,field_value},warehouse_id,x_warehouse_id,warehouse{id,xid},parent_id,x_parent_id,variations.limit(10000).offset(0){id,xid,name,slug,item_code,product_type,barcode_symbology,item_code,image,image_url,category_id,x_category_id,unit_id,x_unit_id,brand_id,x_brand_id},variations:productVariations{id,xid,product_id,x_product_id,variant_id,x_variant_id,variant_value_id,x_variant_value_id},variations:category{id,xid,name},variations:brand{id,xid,name},variations:unit{id,xid,name,short_name},variations:productVariations:variation{id,xid,name},variations:productVariations:variationType{id,xid,name},variations:details{stock_quantitiy_alert,opening_stock,opening_stock_date,wholesale_price,wholesale_quantity,mrp,purchase_price,sales_price,tax_id,x_tax_id,purchase_tax_type,sales_tax_type,current_stock,warehouse_id,x_warehouse_id,status},variations:details:tax{id,xid,name,rate},variations:details:warehouse{id,xid,name}";
+            }
 
             if (productType.value == "variable") {
                 url =

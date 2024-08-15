@@ -32,6 +32,9 @@
                             <a-select-option value="variable">
                                 {{ $t("variations.variant_type_product") }}
                             </a-select-option>
+                            <a-select-option value="service">
+                                {{ $t("variations.service_type_product") }}
+                            </a-select-option>
                         </a-select>
                     </a-form-item>
                 </a-col>
@@ -384,19 +387,6 @@
                                             :barcodeSymbology="formData.barcode_symbology"
                                             v-else
                                         />
-
-                                        <a-button
-                                            v-if="formData.item_code == ''"
-                                            type="text"
-                                            size="small"
-                                            @click="generatePLUBarCode"
-                                        >
-                                            <template #icon>
-                                                <BarcodeOutlined />
-                                            </template>
-                                            {{ $t("product.generate_plucode") }}
-                                        </a-button>
-
                                     </template>
                                 </a-input>
                             </a-form-item>
@@ -905,7 +895,7 @@ export default defineComponent({
         };
 
         const generateBarCode = () => {
-            props.formData.item_code = parseInt(Math.random() * 10000000000);
+            props.formData.item_code = '20'+parseInt(Math.random() * 10000000000);
         };
 
         const generatePLUBarCode = () => {
