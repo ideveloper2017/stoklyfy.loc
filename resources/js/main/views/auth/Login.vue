@@ -81,7 +81,7 @@
                                     </a-button>
                                 </a-form-item>
                             </a-form>
-                            <DemoCredentials :credentials="credentials" />
+<!--                            <DemoCredentials :credentials="credentials" />-->
                         </a-card>
                     </a-col>
                 </a-row>
