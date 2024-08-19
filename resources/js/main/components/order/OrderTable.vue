@@ -258,15 +258,23 @@
                                             <DeleteOutlined />
                                             {{ $t("common.delete") }}
                                         </a-menu-item>
-                                        <a-menu-item key="download">
-                                            <a-typography-link
-                                                :href="`${invoiceBaseUrl}/${record.unique_id}/${selectedLang}`"
-                                                target="_blank"
-                                            >
-                                                <DownloadOutlined />
-                                                {{ $t("common.download") }}
-                                            </a-typography-link>
+                                        <a-menu-item
+                                            key="pos_invoice"
+                                            @click="viewPosInvoiceItem(record)"
+                                        >
+                                            <DeleteOutlined />
+                                            {{ $t("common.Pos") }}
+                                            {{ $t("sales.invoice") }}
                                         </a-menu-item>
+<!--                                        <a-menu-item key="download">-->
+<!--                                            <a-typography-link-->
+<!--                                                :href="`${invoiceBaseUrl}/${record.unique_id}/${selectedLang}`"-->
+<!--                                                target="_blank"-->
+<!--                                            >-->
+<!--                                                <DownloadOutlined />-->
+<!--                                                {{ $t("common.download") }}-->
+<!--                                            </a-typography-link>-->
+<!--                                        </a-menu-item>-->
                                     </a-menu>
                                 </template>
                             </a-dropdown>
@@ -360,6 +368,12 @@
         :order="modalData"
         @closed="viewModalVisible = false"
     />
+
+    <InvoiceModal
+        :visible="invoiceModalVisible"
+        :order="selectedItem"
+        @closed="invoiceModalVisible = false"
+    />
 </template>
 
 <script>
@@ -392,6 +406,7 @@ import UserInfo from "../../../common/components/user/UserInfo.vue";
 import OrderDetails from "./OrderDetails.vue";
 import ConfirmOrder from "../../views/stock-management/online-orders/ConfirmOrder.vue";
 import ViewOrder from "../../views/stock-management/online-orders/ViewOrder.vue";
+import InvoiceModal from "../../views/stock-management/pos/Invoice.vue";
 
 export default {
     props: {
@@ -414,6 +429,7 @@ export default {
     },
     emits: ["onRowSelection"],
     components: {
+        InvoiceModal,
         EyeOutlined,
         PlusOutlined,
         EditOutlined,
@@ -430,7 +446,6 @@ export default {
         PaymentStatus,
         OrderStatus,
         OrderDetails,
-
         ConfirmOrder,
         ViewOrder,
     },
@@ -460,6 +475,7 @@ export default {
         const route = useRoute();
         const { t } = useI18n();
         const detailsDrawerVisible = ref(false);
+        const invoiceModalVisible = ref(false);
 
         const selectedItem = ref({});
 
@@ -619,6 +635,13 @@ export default {
         const updateSubscriptionModules = () => {
             store.dispatch("auth/updateVisibleSubscriptionModules");
         };
+
+        const viewPosInvoiceItem=(record)=>{
+            console.log(record)
+            selectedItem.value=record;
+            invoiceModalVisible.value=true;
+
+        }
 
         const viewItem = (record) => {
             selectedItem.value = record;
@@ -792,9 +815,10 @@ export default {
 
             selectedItem,
             viewItem,
+            viewPosInvoiceItem,
             restSelectedItem,
             paymentSuccess,
-
+            invoiceModalVisible,
             showDeleteConfirm,
             showSelectedDeleteConfirm,
 

@@ -102,7 +102,7 @@ class AuthController extends ApiBaseController
         ]);
     }
 
-    public function pdf($uniqueId, $langKey = "en")
+    public function pdf($uniqueId, $langKey = "uz")
     {
         $order = Order::with(['warehouse', 'user', 'items', 'items.product', 'items.unit', 'orderPayments:id,order_id,payment_id,amount', 'orderPayments.payment:id,payment_mode_id', 'orderPayments.payment.paymentMode:id,name'])
             ->where('unique_id', $uniqueId)
@@ -110,7 +110,7 @@ class AuthController extends ApiBaseController
 
         $lang = Lang::where('key', $langKey)->first();
         if (!$lang) {
-            $lang = Lang::where('key', 'en')->first();
+            $lang = Lang::where('key', 'uz')->first();
         }
 
         $invoiceTranslation = Translation::where('lang_id', $lang->id)

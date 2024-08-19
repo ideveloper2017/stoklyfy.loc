@@ -257,7 +257,7 @@ export default {
             amount: 0,
             notes: "",
         });
-        console.log(props.customer)
+
         const { t } = useI18n();
         const allPaymentRecords = ref([]);
         const paymentRecordsColumns = ref([
