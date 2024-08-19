@@ -9,7 +9,7 @@
 
         <div id="printThis" style="display: none">
             <BarcodeGenerator
-                v-for="n in 24"
+                v-for="n in 1"
                 :key="n"
                 :value="itemCode + ''"
                 :format="barcodeSymbology"

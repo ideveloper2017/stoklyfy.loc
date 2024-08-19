@@ -557,7 +557,7 @@
                         </a-input-number>
                     </a-form-item>
                 </a-col>
-                <a-col :xs="24" :sm="24" :md="8" :lg="8">
+                <a-col :xs="24" :sm="24" :md="8" :lg="8" style="display: none">
                     <a-form-item
                         :label="$t('product.mrp')"
                         name="mrp"
