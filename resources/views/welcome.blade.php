@@ -112,9 +112,6 @@
                 'defaultLangKey': "{{ $defaultLangKey }}",
             };
         </script>
-        @if(app_type() == 'saas')
-            <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-        @endif
 
         @vite('resources/js/app.js')
     </body>
