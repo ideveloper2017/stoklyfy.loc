@@ -262,8 +262,8 @@
                                             key="pos_invoice"
                                             @click="viewPosInvoiceItem(record)"
                                         >
-                                            <DeleteOutlined />
-                                            {{ $t("common.Pos") }}
+                                            <PrinterOutlined />
+                                            {{ $t("menu.pos") }}
                                             {{ $t("sales.invoice") }}
                                         </a-menu-item>
 <!--                                        <a-menu-item key="download">-->
@@ -382,6 +382,7 @@ import {
     EyeOutlined,
     PlusOutlined,
     EditOutlined,
+    PrinterOutlined,
     DeleteOutlined,
     ExclamationCircleOutlined,
     MoreOutlined,
@@ -433,6 +434,7 @@ export default {
         EyeOutlined,
         PlusOutlined,
         EditOutlined,
+        PrinterOutlined,
         DeleteOutlined,
         MoreOutlined,
         DownloadOutlined,
@@ -637,9 +639,14 @@ export default {
         };
 
         const viewPosInvoiceItem=(record)=>{
-            console.log(record)
+
             selectedItem.value=record;
             invoiceModalVisible.value=true;
+
+            record.items.map((data)=>{
+                console.log(data.product);
+            })
+
 
         }
 
