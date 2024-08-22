@@ -36,7 +36,7 @@
             class="mt-5"
             style="margin: 10px 16px 0"
         >
-            <a-col :xs="24" :sm="24" :md="24" :lg="10" :xl="10">
+            <a-col :xs="24" :sm="24" :md="24" :lg="14" :xl="14">
                 <div class="pos-left-wrapper">
                     <div class="pos-left-header">
                         <a-card class="left-pos-top" :style="{ marginBottom: '5px' }">
@@ -377,7 +377,7 @@
                     </div>
                 </div>
             </a-col>
-            <a-col class="right-pos-sidebar" :xs="24" :sm="24" :md="24" :lg="14" :xl="14">
+            <a-col class="right-pos-sidebar" :xs="24" :sm="24" :md="24" :lg="10" :xl="10">
                 <perfect-scrollbar
                     :options="{
                         wheelSpeed: 1,
@@ -405,8 +405,8 @@
                         <a-col
                             v-for="item in productLists"
                             :key="item.xid"
-                            :xxl="4"
-                            :lg="4"
+                            :xxl="6"
+                            :lg="6"
                             :md="10"
                             :xs="22"
                             @click="selectSaleProduct(item)"
