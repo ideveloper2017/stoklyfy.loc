@@ -372,6 +372,7 @@
     <InvoiceModal
         :visible="invoiceModalVisible"
         :order="selectedItem"
+        :customer="selectCustomer"
         @closed="invoiceModalVisible = false"
     />
 </template>
@@ -407,7 +408,7 @@ import UserInfo from "../../../common/components/user/UserInfo.vue";
 import OrderDetails from "./OrderDetails.vue";
 import ConfirmOrder from "../../views/stock-management/online-orders/ConfirmOrder.vue";
 import ViewOrder from "../../views/stock-management/online-orders/ViewOrder.vue";
-import InvoiceModal from "../../views/stock-management/pos/Invoice.vue";
+import InvoiceModal from "../../views/stock-management/purchases/Invoice.vue";
 
 export default {
     props: {
@@ -478,7 +479,7 @@ export default {
         const { t } = useI18n();
         const detailsDrawerVisible = ref(false);
         const invoiceModalVisible = ref(false);
-
+        const selectCustomer=ref();
         const selectedItem = ref({});
 
         // For Online Orders
@@ -544,7 +545,7 @@ export default {
             }
 
             datatableVariables.tableUrl.value = {
-                url: `${props.orderType}?fields=id,xid,unique_id,warehouse_id,x_warehouse_id,warehouse{id,xid,name},from_warehouse_id,x_from_warehouse_id,fromWarehouse{id,xid,name},invoice_number,order_type,order_date,tax_amount,discount,shipping,subtotal,paid_amount,due_amount,order_status,payment_status,total,tax_rate,staff_user_id,x_staff_user_id,staffMember{id,xid,name,profile_image,profile_image_url,user_type},user_id,x_user_id,user{id,xid,user_type,name,profile_image,profile_image_url,phone},orderPayments{id,xid,amount,payment_id,x_payment_id},orderPayments:payment{id,xid,amount,payment_mode_id,x_payment_mode_id,date,notes},orderPayments:payment:paymentMode{id,xid,name},items{id,xid,product_id,x_product_id,single_unit_price,unit_price,quantity,tax_rate,total_tax,tax_type,total_discount,subtotal},items:product{id,xid,name,image,image_url,unit_id,x_unit_id},items:product:category{id,name},items:product:unit{id,xid,name,short_name},items:product:details{id,xid,warehouse_id,x_warehouse_id,product_id,x_product_id,current_stock},items:orderItemTaxes{id,xid,order_item_id,order_item_id,tax_name,tax_amount},cancelled,terms_condition,shippingAddress{id,xid,order_id,name,email,phone,address,shipping_address,city,state,country,zipcode}`,
+                url: `${props.orderType}?fields=id,xid,unique_id,warehouse_id,x_warehouse_id,warehouse{id,xid,name},from_warehouse_id,x_from_warehouse_id,fromWarehouse{id,xid,name},invoice_number,order_type,order_date,tax_amount,discount,shipping,subtotal,paid_amount,due_amount,order_status,payment_status,total,tax_rate,staff_user_id,x_staff_user_id,staffMember{id,xid,name,profile_image,profile_image_url,user_type},user_id,x_user_id,user{id,xid,user_type,name,profile_image,profile_image_url,phone},user:details{opening_balance,opening_balance_type,credit_period,credit_limit,due_amount,warehouse_id,x_warehouse_id},orderPayments{id,xid,amount,payment_id,x_payment_id},orderPayments:payment{id,xid,amount,payment_mode_id,x_payment_mode_id,date,notes},orderPayments:payment:paymentMode{id,xid,name},items{id,xid,product_id,x_product_id,single_unit_price,unit_price,quantity,tax_rate,total_tax,tax_type,total_discount,subtotal},items:product{id,xid,name,image,image_url,unit_id,x_unit_id},items:product:category{id,name},items:product:unit{id,xid,name,short_name},items:product:details{id,xid,warehouse_id,x_warehouse_id,product_id,x_product_id,current_stock},items:orderItemTaxes{id,xid,order_item_id,order_item_id,tax_name,tax_amount},cancelled,terms_condition,shippingAddress{id,xid,order_id,name,email,phone,address,shipping_address,city,state,country,zipcode}`,
                 filterString,
                 filters: {
                     user_id: tableFilter.user_id ? tableFilter.user_id : undefined,
@@ -643,10 +644,8 @@ export default {
             selectedItem.value=record;
             invoiceModalVisible.value=true;
 
-            record.items.map((data)=>{
-                console.log(data.product);
-            })
-
+            console.log(record);
+            selectCustomer.value=record.user;
 
         }
 
@@ -846,6 +845,7 @@ export default {
             confirmModalVisible,
             viewModalVisible,
             modalData,
+            selectCustomer,
             // End For Online Orders
 
             getCheckboxProps,

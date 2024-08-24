@@ -56,7 +56,7 @@
                                                     v-for="customer in customers"
                                                     :key="customer.xid"
                                                     :title="customer.name"
-                                                    :value="customer.id"
+                                                    :value="customer.xid"
                                                     :customer="customer"
                                                 >
                                                     {{ customer.name }}
@@ -67,7 +67,9 @@
                                                         "
                                                     >
                                                         <br />
-                                                        {{ customer.phone }} {{ formatAmountCurrency(customer.details.due_amount)}}
+                                                        {{ customer.phone }}
+                                                        <br/>
+                                                        {{ $t('common.balance')}} {{ formatAmountCurrency(customer.details.due_amount)}}
                                                     </span>
                                                 </a-select-option>
                                             </a-select>
@@ -1329,7 +1331,6 @@ export default {
 
             formData.value = {
                 ...formData.value,
-                tax_id: undefined,
                 category_id: undefined,
                 brand_id: undefined,
                 tax_id: undefined,
