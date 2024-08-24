@@ -482,14 +482,15 @@
                 </a-col>
             </a-row>
 
-            <a-row :gutter="16"  v-if="((formData.product_type == 'single') || (formData.product_type == 'weight'))">
-                <a-col :xs="24" :sm="24" :md="8" :lg="8">
+            <a-row :gutter="16" >
+                <a-col :xs="24" :sm="24" :md="8" :lg="8"   v-if="((formData.product_type == 'single') || (formData.product_type == 'weight'))">
                     <a-form-item
                         :label="$t('product.purchase_price')"
                         name="purchase_price"
                         :help="rules.purchase_price ? rules.purchase_price.message : null"
                         :validateStatus="rules.purchase_price ? 'error' : null"
                         class="required"
+
                     >
                         <a-input-number
                             v-model:value="formData.purchase_price"
@@ -520,13 +521,14 @@
                         </a-input-number>
                     </a-form-item>
                 </a-col>
-                <a-col :xs="24" :sm="24" :md="8" :lg="8">
+                <a-col :xs="24" :sm="24" :md="8" :lg="8"  v-if="((formData.product_type == 'single') || (formData.product_type == 'weight')) || (formData.product_type == 'service')">
                     <a-form-item
                         :label="$t('product.sales_price')"
                         name="sales_price"
                         :help="rules.sales_price ? rules.sales_price.message : null"
                         :validateStatus="rules.sales_price ? 'error' : null"
                         class="required"
+
                     >
                         <a-input-number
                             v-model:value="formData.sales_price"

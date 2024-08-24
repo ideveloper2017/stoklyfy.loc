@@ -53,7 +53,17 @@
                             importUrl="products/import"
                             @onUploadSuccess="setUrlData"
                         />
+
+                        <a-button
+                            type="primary"
+                            @click="showSelectedDeleteConfirm"
+                            block
+                        >
+                            <template #icon><DeleteOutlined /></template>
+                            {{ $t("common.export") }}
+                        </a-button>
                     </template>
+
                     <a-button
                         v-if="
                             table.selectedRowKeys.length > 0 &&
@@ -67,6 +77,7 @@
                         <template #icon><DeleteOutlined /></template>
                         {{ $t("common.delete") }}
                     </a-button>
+
                 </a-space>
             </a-col>
             <a-col :xs="24" :sm="24" :md="12" :lg="14" :xl="14">

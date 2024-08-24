@@ -44,17 +44,27 @@ class ProductController extends ApiBaseController
             $query->where('products.warehouse_id', '=', $warehouse->id);
         }
 
-        if($request->has('product_type') && $request->product_type == 'variable') {
+        if ($request->has('product_type') && $request->product_type == 'variable') {
             $query = $query->whereNull('products.parent_id')
                 ->where('products.product_type', 'variable');
-        } else if($request->has('product_type') && $request->product_type == 'single') {
+        } else if ($request->has('product_type') && $request->product_type == 'single') {
             $query = $query->join('product_details', 'product_details.product_id', '=', 'products.id')
                 ->where('product_details.warehouse_id', $warehouse->id)
                 ->whereNull('products.parent_id')
                 ->where('products.product_type', 'single');
+        } else if ($request->has('product_type') && $request->product_type == 'service') {
+            $query = $query->join('product_details', 'product_details.product_id', '=', 'products.id')
+                ->where('product_details.warehouse_id', $warehouse->id)
+                ->whereNull('products.parent_id')
+                ->where('products.product_type', 'service');
+        } else if ($request->has('product_type') && $request->product_type == 'weight') {
+            $query = $query->join('product_details', 'product_details.product_id', '=', 'products.id')
+                ->where('product_details.warehouse_id', $warehouse->id)
+                ->whereNull('products.parent_id')
+                ->where('products.product_type', 'service');
         } else {
             $query = $query->join('product_details', 'product_details.product_id', '=', 'products.id')
-            ->where('product_details.warehouse_id', $warehouse->id);
+                ->where('product_details.warehouse_id', $warehouse->id);
         }
 
 
@@ -81,22 +91,23 @@ class ProductController extends ApiBaseController
 
         return $product;
     }
+
     public function stored(Product $product)
     {
         $request = request();
         $allWarehouses = Warehouse::select('id')->get();
         $productType = $product->product_type;
 
-        if($productType == 'variable') {
+        if ($productType == 'variable') {
             $allVariations = $request->variations;
 
-            foreach($allVariations as $allVariation) {
+            foreach ($allVariations as $allVariation) {
                 // $variantValueId = $this->getIdFromHash($allVariation['variant_value_id']);
                 // $variantValue = Variation::find($variantValueId);
 
                 $allRequestVariantTypes = $allVariation['variant_value_id'];
                 $fullName = $product->name . ' - ';
-                foreach($allRequestVariantTypes as $allRequestVariantType) {
+                foreach ($allRequestVariantTypes as $allRequestVariantType) {
                     $convertedVariantValueId = $this->getIdFromHash($allRequestVariantType);
                     $variantValueRecord = Variation::find($convertedVariantValueId);
 
@@ -122,7 +133,7 @@ class ProductController extends ApiBaseController
                 $newVariantProduct->parent_id = $product->id;
                 $newVariantProduct->save();
 
-                foreach($allRequestVariantTypes as $allRequestVariantType) {
+                foreach ($allRequestVariantTypes as $allRequestVariantType) {
                     $convertedVariantValueId = $this->getIdFromHash($allRequestVariantType);
                     $variantValueRecord = Variation::find($convertedVariantValueId);
 
@@ -213,18 +224,18 @@ class ProductController extends ApiBaseController
         $productType = $product->product_type;
         $allWarehouses = Warehouse::select('id')->get();
 
-        if($productType == 'variable') {
+        if ($productType == 'variable') {
             $allVariations = $request->variations;
 
-            foreach($allVariations as $allVariation) {
+            foreach ($allVariations as $allVariation) {
                 // This is newly added variant product
-                if($allVariation['xid'] == '') {
+                if ($allVariation['xid'] == '') {
                     // $variantValueId = $this->getIdFromHash($allVariation['variant_value_id']);
                     // $variantValue = Variation::find($variantValueId);
 
                     $allRequestVariantTypes = $allVariation['variant_value_id'];
                     $fullName = $product->name . ' - ';
-                    foreach($allRequestVariantTypes as $allRequestVariantType) {
+                    foreach ($allRequestVariantTypes as $allRequestVariantType) {
                         $convertedVariantValueId = $this->getIdFromHash($allRequestVariantType);
                         $variantValueRecord = Variation::find($convertedVariantValueId);
 
@@ -251,7 +262,7 @@ class ProductController extends ApiBaseController
 
                     // Deleting Previous ProductVariants
                     ProductVariant::where('product_id', $newVariantProduct->id)->delete();
-                    foreach($allRequestVariantTypes as $allRequestVariantType) {
+                    foreach ($allRequestVariantTypes as $allRequestVariantType) {
                         $convertedVariantValueId = $this->getIdFromHash($allRequestVariantType);
                         $variantValueRecord = Variation::find($convertedVariantValueId);
 
@@ -292,7 +303,7 @@ class ProductController extends ApiBaseController
                     Common::recalculateOrderStock($currentProductDetails->warehouse_id, $newVariantProduct->id);
                 } else {
                     // This is old variant product
-                    $variantProductId =  $this->getIdFromHash($allVariation['xid']);
+                    $variantProductId = $this->getIdFromHash($allVariation['xid']);
 
                     $variantProduct = Product::find($variantProductId);
 
@@ -300,7 +311,7 @@ class ProductController extends ApiBaseController
                     // $variantValue = Variation::find($variantValueId);
                     $allRequestVariantTypes = $allVariation['variant_value_id'];
                     $fullName = $product->name . ' - ';
-                    foreach($allRequestVariantTypes as $allRequestVariantType) {
+                    foreach ($allRequestVariantTypes as $allRequestVariantType) {
                         $convertedVariantValueId = $this->getIdFromHash($allRequestVariantType);
                         $variantValueRecord = Variation::find($convertedVariantValueId);
 
@@ -359,7 +370,7 @@ class ProductController extends ApiBaseController
         $orderType = $request->order_type;
         $warehouseId = $warehouse->id;
 
-        $products = Product::select('products.id', 'products.name', 'products.image', 'products.unit_id','products.sku')
+        $products = Product::select('products.id', 'products.name', 'products.image', 'products.unit_id', 'products.sku')
             ->where(function ($query) use ($searchTerm) {
                 $query->where('products.name', 'LIKE', "%$searchTerm%")
                     ->orWhere('products.item_code', trim($searchTerm))
@@ -415,10 +426,10 @@ class ProductController extends ApiBaseController
 
                     if ($taxType == 'inclusive') {
                         $subTotal = $singleUnitPrice;
-                        $singleUnitPrice =  ($singleUnitPrice * 100) / (100 + $taxRate);
+                        $singleUnitPrice = ($singleUnitPrice * 100) / (100 + $taxRate);
                         $taxAmount = ($singleUnitPrice) * ($taxRate / 100);
                     } else {
-                        $taxAmount =  ($singleUnitPrice * ($taxRate / 100));
+                        $taxAmount = ($singleUnitPrice * ($taxRate / 100));
                         $subTotal = $singleUnitPrice + $taxAmount;
                     }
                 } else {
@@ -428,37 +439,37 @@ class ProductController extends ApiBaseController
                 }
 
                 $allProducs[] = [
-                    'item_id'    =>  '',
-                    'xid'       =>  $product->xid,
-                    'sku'       =>$product->sku,
-                    'name'    =>  $product->name,
-                    'image'    =>  $product->image,
-                    'image_url'    =>  $product->image_url,
-                    'discount_rate'    =>  0,
-                    'total_discount'    =>  0,
-                    'x_tax_id'    =>  $tax ? $tax->xid : null,
-                    'tax_type'    =>  $taxType,
-                    'tax_rate'    =>  $taxRate,
-                    'total_tax'    =>  $taxAmount,
-                    'x_unit_id'    =>  Hashids::encode($product->unit_id),
-                    'unit'    =>  $unit,
-                    'unit_price'    =>  $unitPrice,
-                    'single_unit_price'    =>  $singleUnitPrice,
-                    'subtotal'    =>  $subTotal,
-                    'quantity'    =>  1,
-                    'stock_quantity'    =>  $stockQuantity,
-                    'unit_short_name'    =>  $unit ? $unit->short_name : '',
+                    'item_id' => '',
+                    'xid' => $product->xid,
+                    'sku' => $product->sku,
+                    'name' => $product->name,
+                    'image' => $product->image,
+                    'image_url' => $product->image_url,
+                    'discount_rate' => 0,
+                    'total_discount' => 0,
+                    'x_tax_id' => $tax ? $tax->xid : null,
+                    'tax_type' => $taxType,
+                    'tax_rate' => $taxRate,
+                    'total_tax' => $taxAmount,
+                    'x_unit_id' => Hashids::encode($product->unit_id),
+                    'unit' => $unit,
+                    'unit_price' => $unitPrice,
+                    'single_unit_price' => $singleUnitPrice,
+                    'subtotal' => $subTotal,
+                    'quantity' => 1,
+                    'stock_quantity' => $stockQuantity,
+                    'unit_short_name' => $unit ? $unit->short_name : '',
                 ];
             }
 
             // All Type products
             if (!$request->has('order_type')) {
                 $allProducs[] = [
-                    'xid'    =>  $product->xid,
-                    'name'    =>  $product->name,
-                    'image'    =>  $product->image,
-                    'image_url'    =>  $product->image_url,
-                    'stock_quantity'    =>  $productDetails->current_stock,
+                    'xid' => $product->xid,
+                    'name' => $product->name,
+                    'image' => $product->image,
+                    'image_url' => $product->image_url,
+                    'stock_quantity' => $productDetails->current_stock,
                 ];
             }
         }
