@@ -266,15 +266,15 @@
                                             {{ $t("menu.pos") }}
                                             {{ $t("sales.invoice") }}
                                         </a-menu-item>
-<!--                                        <a-menu-item key="download">-->
-<!--                                            <a-typography-link-->
-<!--                                                :href="`${invoiceBaseUrl}/${record.unique_id}/${selectedLang}`"-->
-<!--                                                target="_blank"-->
-<!--                                            >-->
-<!--                                                <DownloadOutlined />-->
-<!--                                                {{ $t("common.download") }}-->
-<!--                                            </a-typography-link>-->
-<!--                                        </a-menu-item>-->
+                                        <a-menu-item key="download">
+                                            <a-typography-link
+                                                :href="`${invoiceBaseUrl}/${record.unique_id}/${selectedLang}`"
+                                                target="_blank"
+                                            >
+                                                <DownloadOutlined />
+                                                {{ $t("common.download") }}
+                                            </a-typography-link>
+                                        </a-menu-item>
                                     </a-menu>
                                 </template>
                             </a-dropdown>
