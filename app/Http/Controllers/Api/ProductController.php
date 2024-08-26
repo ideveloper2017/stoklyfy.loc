@@ -508,6 +508,13 @@ class ProductController extends ApiBaseController
         return ApiResponse::make('Imported Successfully', []);
     }
 
+    public function getLastProductSkuCode()
+    {
+        $productCode = Product::latest()->first()?Product::latest()->first()->id:1;
+        $formattedCode = str_pad($productCode, 5, "0", STR_PAD_LEFT);
+        return ApiResponse::make('Ok',['product_sku_code'=>$formattedCode]);
+    }
+
     public function checkProductVariant(CheckVariantRequest $request)
     {
         return ApiResponse::make('Added Successfully', []);

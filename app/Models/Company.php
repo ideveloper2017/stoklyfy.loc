@@ -18,7 +18,7 @@ class Company extends BaseModel
 
     protected $dates = ['licence_expire_on'];
 
-    protected $default = ['xid'];
+    protected $default = ['xid','product_code_prefix'];
 
     protected $guarded = ['id', 'is_global', 'subscription_plan_id', 'payment_transcation_id', 'licence_expire_on', 'package_type', 'stripe_id', 'trial_ends_at',  'created_at', 'updated_at'];
 

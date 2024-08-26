@@ -127,6 +127,7 @@ class LangTrans
              'module' => 'Module',
              'save_and_new' => 'Saqlash va yangilash',
              'save_and_continue' => 'Saqlash va davom ettirish',
+             'product_code_prefix'=>'Tovar kod prefixsi',
         ],
         'menu' => [
             'dashboard' => 'Boshqaruv paneli',

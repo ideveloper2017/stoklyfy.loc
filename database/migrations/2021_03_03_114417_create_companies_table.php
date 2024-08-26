@@ -35,6 +35,7 @@ class CreateCompaniesTable extends Migration
             $table->foreign('currency_id')->references('id')->on('currencies')->onDelete('set null')->onUpdate('cascade');
             $table->bigInteger('lang_id')->unsigned()->nullable();
             $table->foreign('lang_id')->references('id')->on('langs')->onDelete('set null')->onUpdate('cascade');
+            $table->string('product_code_prefix',6)->nullable()->default(NULL);
             $table->bigInteger('warehouse_id')->unsigned()->nullable();
             $table->foreign('warehouse_id')->references('id')->on('warehouses')->onDelete('set null')->onUpdate('cascade');
             $table->string('left_sidebar_theme', 20)->default("dark");

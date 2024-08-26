@@ -6,6 +6,7 @@ use Examyou\RestAPI\Facades\ApiRoute;
 ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
     ApiRoute::get('all-langs', ['as' => 'api.extra.all-langs', 'uses' => 'AuthController@allEnabledLangs']);
     ApiRoute::get('pdf/{uniqueId}/{lang?}', ['as' => 'api.extra.pdf', 'uses' => 'AuthController@pdf']);
+    ApiRoute::get('latest-product-skucode', ['as' => 'api.extra.latest-product-skucode', 'uses' => 'ProductController@getLastProductSkuCode']);
     ApiRoute::get('lang-trans', ['as' => 'api.extra.lang-trans', 'uses' => 'AuthController@langTrans']);
     ApiRoute::post('change-theme-mode', ['as' => 'api.extra.change-theme-mode', 'uses' => 'AuthController@changeThemeMode']);
     ApiRoute::get('default-walkin-customer', ['as' => 'api.extra.walkin-custome', 'uses' => 'AuthController@getDefaultWalkinCustomer']);

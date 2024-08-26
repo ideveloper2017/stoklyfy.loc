@@ -405,7 +405,7 @@
                                     </a-select>
                                 </a-form-item>
                             </a-col>
-                            <a-col :xs="24" :sm="24" :md="6" :lg="6">
+                            <a-col :xs="24" :sm="24" :md="4" :lg="4">
                                 <a-form-item
                                     :label="$t('company.shortcut_menu_Placement')"
                                     name="shortcut_menus"
@@ -444,7 +444,7 @@
                                     </a-select>
                                 </a-form-item>
                             </a-col>
-                            <a-col :xs="24" :sm="24" :md="6" :lg="6">
+                             <a-col :xs="24" :sm="24" :md="4" :lg="4">
                                 <a-form-item
                                     :label="$t('company.language')"
                                     name="lang_id"
@@ -475,6 +475,24 @@
                                             @onAddSuccess="languageAdded"
                                         />
                                     </span>
+                                </a-form-item>
+                            </a-col>
+                            <a-col :xs="24" :sm="24" :md="4" :lg="4">
+                                <a-form-item
+                                    :label="$t('company.product_code_prefix')"
+                                    name="lang_id"
+                                    :help="rules.product_code_prefix ? rules.product_code_prefix.message : null"
+                                    :validateStatus="rules.product_code_prefix ? 'error' : null"
+                                    class="required"
+                                >
+                                    <a-input
+                                        v-model:value="formData.product_code_prefix"
+                                        :placeholder="
+                                            $t('common.placeholder_default_text', [
+                                                $t('company.product_code_prefix'),
+                                            ])
+                                        "
+                                    />
                                 </a-form-item>
                             </a-col>
                         </a-row>
@@ -822,6 +840,7 @@ export default {
                 rtl: company.rtl,
                 currency_id: company.x_currency_id,
                 lang_id: company.x_lang_id,
+                product_code_prefix:company.product_code_prefix,
                 warehouse_id: company.x_warehouse_id,
                 primary_color: company.primary_color,
                 timezone: company.timezone,

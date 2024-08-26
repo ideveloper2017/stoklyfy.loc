@@ -30,12 +30,12 @@ class UpdateRequest extends FormRequest
             'short_name'    => 'required',
             'email'    => 'required|email',
             'phone'    => 'required|numeric',
+            'product_code_prefix'=>'required',
             'currency_id' => 'required',
             'warehouse_id' => 'required',
             'timezone' => 'required',
             'date_format' => 'required',
             'time_format' => 'required',
-            'currency_id' => 'required',
             // 'lang_id' => 'required',
         ];
 

@@ -161,19 +161,38 @@
                         </a-col>
                         <a-col :xs="24" :sm="24" :md="12" :lg="12">
                             <a-form-item
-                                :label="$t('product.sku')"
+                                :label="$t('product.sales_price')"
                                 name="sku"
                                 :help="rules.sku ? rules.sku.message : null"
                                 :validateStatus="rules.sku ? 'error' : null"
-                                class="required">
-                                <a-input
+                                class="required"
+
+                            >
+                                <a-input-number
                                     v-model:value="formData.sku"
                                     :placeholder="
-                                        $t('common.placeholder_default_text', [
-                                            $t('product.sku'),
-                                        ])
-                                    "
-                                />
+                                $t('common.placeholder_default_text', [
+                                    $t('product.sku'),
+                                ])
+                            "
+                                    min="0"
+                                    style="width: 100%"
+                                    @click="getProductSkuCode"
+                                >
+<!--                                    <template #addonBefore>-->
+<!--                                        {{ appSetting.product_code_prefix }}-->
+<!--                                    </template>-->
+                                    <template #addonAfter>
+                                        <a-button
+                                            type="text"
+                                            size="small"
+                                        >
+                                            <template #icon>
+                                                <PlusOutlined />
+                                            </template>
+                                        </a-button>
+                                    </template>
+                                </a-input-number>
                             </a-form-item>
                         </a-col>
                     </a-row>
@@ -527,7 +546,7 @@
                         name="sales_price"
                         :help="rules.sales_price ? rules.sales_price.message : null"
                         :validateStatus="rules.sales_price ? 'error' : null"
-                        class="required"
+                         class="required"
 
                     >
                         <a-input-number
@@ -540,13 +559,13 @@
                             min="0"
                             style="width: 100%"
                         >
-                            <template #addonBefore>
+                            <template #addonAfter>
                                 {{ appSetting.currency.symbol }}
                             </template>
-                            <template #addonAfter >
+                            <template #addonBefore  style="width: 120px;display:none;">
                                 <a-select
                                     v-model:value="formData.sales_tax_type"
-                                    style="width: 120px;display:none;"
+
                                 >
                                     <a-select-option value="inclusive">
                                         {{ $t("common.with_tax") }}
@@ -795,6 +814,7 @@ export default defineComponent({
         const warehouses = ref([]);
         const customFieldsData = ref({});
         const selectedUnit = ref();
+        const productSkuCode = ref();
         const store = useStore();
         const brandsUrl = "brands?limit=10000";
         const categoriesUrl = "categories?limit=10000";
@@ -804,6 +824,7 @@ export default defineComponent({
         const warehouseUrl = "warehouses?limit=10000";
         const waehouseId = ref(undefined);
         const variableTypeTable = ref(null);
+        const productSkuCodeUrl='latest-product-skucode?limit=10000';
 
         const variations = ref([]);
         const variationsUrl =
@@ -822,6 +843,7 @@ export default defineComponent({
             const customFieldsPromise = axiosAdmin.get(customFieldsUrl);
             const warehousesPromise = axiosAdmin.get(warehouseUrl);
             const variationsPromise = axiosAdmin.get(variationsUrl);
+            const productSkuCode= axiosAdmin.get(productSkuCodeUrl);
 
             Promise.all([
                 brandsPromise,
@@ -831,6 +853,7 @@ export default defineComponent({
                 customFieldsPromise,
                 warehousesPromise,
                 variationsPromise,
+                productSkuCode
             ]).then(
                 ([
                     brandsResponse,
@@ -840,6 +863,7 @@ export default defineComponent({
                     customFieldsResponse,
                     warehousesResponse,
                     variationsResponse,
+                    productSkuCodeResponse,
                 ]) => {
                     brands.value = brandsResponse.data;
                     units.value = unitsResponse.data;
@@ -847,12 +871,14 @@ export default defineComponent({
                     customFields.value = customFieldsResponse.data;
                     warehouses.value = warehousesResponse.data;
                     variations.value = variationsResponse.data;
-
+                    productSkuCode.value=productSkuCodeResponse.data;
                     selectedUnit.value = find(units.value, [
                         "xid",
                         props.formData.unit_id,
                     ]);
 
+                    // props.formData.sku=productSkuCodeResponse.data.product_sku_code;
+                    getProductSkuCode();
                     setCategories(categoriesResponse.data);
                 }
             );
@@ -896,6 +922,16 @@ export default defineComponent({
             return current && current > moment().endOf("day");
         };
 
+        const getProductSkuCode=()=>{
+            const productSkuCode= axiosAdmin.get(productSkuCodeUrl);
+            Promise.all([
+                productSkuCode
+            ]).then(([productSkuCodeResponse])=> {
+                props.formData.sku =`${appSetting.value.product_code_prefix+''+productSkuCodeResponse.data.product_sku_code}`;
+            });
+
+        }
+
         const generateBarCode = () => {
             props.formData.item_code = '20'+parseInt(Math.random() * 10000000000);
         };
@@ -921,12 +957,15 @@ export default defineComponent({
                         emit("addAndNewSuccess", res.xid);
 
                         resetDataAfterModalVisible();
+                        getProductSkuCode();
+
                     } else if (sbumitType == "add-continue") {
                         emit("addAndContinueSuccess", res.xid);
 
                         props.formData.slug = slugify(props.formData.name);
 
                         generateBarCode();
+                        getProductSkuCode();
 
                         // Also reset the variations
                         var allNewVariationsData = [];
@@ -942,6 +981,7 @@ export default defineComponent({
                         variableTypeTable.value.setDirectVariantTableData(
                             allNewVariationsData
                         );
+                        resetDataAfterModalVisible();
                     } else {
                         emit("addEditSuccess", res.xid);
                     }
@@ -980,6 +1020,7 @@ export default defineComponent({
         const onClose = () => {
             rules.value = {};
             emit("closed");
+
         };
 
         const brandAdded = () => {
@@ -1069,13 +1110,13 @@ export default defineComponent({
             generatePLUBarCode,
             drawerWidth: window.innerWidth <= 991 ? "90%" : "70%",
             appSetting,
-
+            getProductSkuCode,
             customFields,
             customFieldsData,
             taxTypes,
             barcodeSymbology,
             selectedUnit,
-
+            productSkuCode,
             brandAdded,
             categoryAdded,
             unitAdded,
