@@ -1,57 +1,68 @@
-import Brands from '../views/product-manager/brands/index.vue';
-import Categories from '../views/product-manager/categories/index.vue';
-import Products from '../views/product-manager/products/index.vue';
-import Variation from '../views/product-manager/variations/index.vue';
-
 export default [
     {
-        path: '/',
-        component: () => import('../../common/layouts/Admin.vue'),
+        path: "/",
+        component: () => import("../../common/layouts/Admin.vue"),
         children: [
             {
-                path: '/admin/brands',
-                component: Brands,
-                name: 'admin.brands.index',
+                path: "/admin/brands",
+                component: () =>
+                    import("../views/product-manager/brands/index.vue"),
+                name: "admin.brands.index",
                 meta: {
                     requireAuth: true,
                     menuParent: "product_manager",
-                    menuKey: route => "brands",
+                    menuKey: (route) => "brands",
                     permission: "brands_view",
-                }
+                },
             },
             {
-                path: '/admin/categories',
-                component: Categories,
-                name: 'admin.categories.index',
+                path: "/admin/categories",
+                component: () =>
+                    import("../views/product-manager/categories/index.vue"),
+                name: "admin.categories.index",
                 meta: {
                     requireAuth: true,
                     menuParent: "product_manager",
-                    menuKey: route => "categories",
+                    menuKey: (route) => "categories",
                     permission: "categories_view",
-                }
+                },
             },
             {
-                path: '/admin/products',
-                component: Products,
-                name: 'admin.products.index',
+                path: "/admin/products",
+                component: () =>
+                    import("../views/product-manager/products/index.vue"),
+                name: "admin.products.index",
                 meta: {
                     requireAuth: true,
                     menuParent: "product_manager",
-                    menuKey: route => "products",
+                    menuKey: (route) => "products",
                     permission: "products_view",
-                }
+                },
             },
             {
-                path: '/admin/variations',
-                component: Variation,
-                name: 'admin.variations.index',
+                path: "/admin/variations",
+                component: () =>
+                    import("../views/product-manager/variations/index.vue"),
+                name: "admin.variations.index",
                 meta: {
                     requireAuth: true,
                     menuParent: "product_manager",
-                    menuKey: route => "variations",
+                    menuKey: (route) => "variations",
                     permission: "products_view",
-                }
+                },
             },
-        ]
-    }
+            {
+                path: "/admin/print-barcode",
+                component: () =>
+                    import("../views/product-manager/print-barcode/index.vue"),
+                name: "admin.print_barcode.index",
+                meta: {
+                    requireAuth: true,
+                    menuParent: "product_manager",
+                    menuKey: (route) => "print_barcodes",
+                    permission: "products_view",
+                },
+            },
+        ],
+    },
 ];

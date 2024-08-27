@@ -1,4 +1,5 @@
 import { useI18n } from "vue-i18n";
+import {ref} from "vue";
 
 const fields = () => {
     const addEditUrl = "products";
@@ -46,7 +47,7 @@ const fields = () => {
         product_type: "single",
         variations: [],
     };
-
+    const productType = ref("single");
     const columns = [
         {
             title: "",
@@ -55,14 +56,20 @@ const fields = () => {
         {
             title: t("product.sku"),
             dataIndex: "sku",
+            sorter: true,
+            sorter_field: "products.sku",
         },
         {
             title: t("product.product"),
             dataIndex: "name",
+            sorter: true,
+            sorter_field: "products.name",
         },
         {
-            title: t("warehouse.warehouse"),
-            dataIndex: "warehouse_id",
+            title: t("product.product_type"),
+            dataIndex: "product_type",
+            sorter: true,
+            sorter_field: "products.product_type",
         },
         {
             title: t("product.category"),
@@ -75,14 +82,20 @@ const fields = () => {
         {
             title: t("product.sales_price"),
             dataIndex: "sales_price",
+             sorter: productType.value == "single" ? true : false,
+             sorter_field: "product_details.sales_price",
         },
         {
             title: t("product.purchase_price"),
             dataIndex: "purchase_price",
+             sorter: productType.value == "single" ? true : false,
+             sorter_field: "product_details.purchase_price",
         },
         {
             title: t("product.current_stock"),
             dataIndex: "current_stock",
+            sorter: productType == "single" ? true : false,
+            sorter_field: "product_details.current_stock",
         },
         {
             title: t("common.action"),

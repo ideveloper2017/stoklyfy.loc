@@ -15,7 +15,49 @@
                     @dateTimeChanged="
                         (changedDateTime) => (filters.dates = changedDateTime)
                     "
+                    :showPreset="false"
                 />
+            </a-col>
+            <a-col
+                :xs="24"
+                :sm="24"
+                :md="12"
+                :lg="18"
+                :xl="18"
+                :style="{ textAlign: 'right' }"
+            >
+                <a-flex justify="flex-end" wrap="wrap" gap="small">
+                    <a-button
+                        :type="activeDateSelector == 'today' ? 'primary' : 'default'"
+                        @click="dateSelectorClicked('today')"
+                    >
+                        {{ $t("dashboard.today") }}
+                    </a-button>
+                    <a-button
+                        :type="activeDateSelector == 'yesterday' ? 'primary' : 'default'"
+                        @click="dateSelectorClicked('yesterday')"
+                    >
+                        {{ $t("dashboard.yesterday") }}
+                    </a-button>
+                    <a-button
+                        :type="activeDateSelector == 'week' ? 'primary' : 'default'"
+                        @click="dateSelectorClicked('week')"
+                    >
+                        {{ $t("dashboard.last_7_days") }}
+                    </a-button>
+                    <a-button
+                        :type="activeDateSelector == 'month' ? 'primary' : 'default'"
+                        @click="dateSelectorClicked('month')"
+                    >
+                        {{ $t("dashboard.this_month") }}
+                    </a-button>
+                    <a-button
+                        :type="activeDateSelector == 'year' ? 'primary' : 'default'"
+                        @click="dateSelectorClicked('year')"
+                    >
+                        {{ $t("dashboard.this_year") }}
+                    </a-button>
+                </a-flex>
             </a-col>
         </a-row>
 
@@ -429,6 +471,7 @@ export default {
             user,
             permsArray,
             selectedWarehouse,
+            dayjs,
         } = common();
         const activeOrderType = ref("");
         const filters = reactive({
@@ -436,6 +479,8 @@ export default {
         });
         const responseData = ref([]);
         const route = useRoute();
+        const activeDateSelector = ref("");
+        const serachDateRangePicker = ref(null);
 
         const stockQuantityColumns = [
             {
@@ -490,6 +535,40 @@ export default {
             });
         });
 
+        const dateSelectorClicked = (selectedType) => {
+            if (selectedType == activeDateSelector.value) {
+                activeDateSelector.value = "";
+
+                serachDateRangePicker.value.setDatePicker([]);
+            } else {
+                activeDateSelector.value = selectedType;
+
+                if (selectedType == "today") {
+                    serachDateRangePicker.value.setDatePicker([dayjs(), dayjs()]);
+                } else if (selectedType == "yesterday") {
+                    serachDateRangePicker.value.setDatePicker([
+                        dayjs().add(-1, "d").startOf("day"),
+                        dayjs().add(-1, "d").endOf("day"),
+                    ]);
+                } else if (selectedType == "week") {
+                    serachDateRangePicker.value.setDatePicker([
+                        dayjs().add(-7, "d"),
+                        dayjs(),
+                    ]);
+                } else if (selectedType == "month") {
+                    serachDateRangePicker.value.setDatePicker([
+                        dayjs().startOf("month"),
+                        dayjs(),
+                    ]);
+                } else if (selectedType == "year") {
+                    serachDateRangePicker.value.setDatePicker([
+                        dayjs().startOf("year"),
+                        dayjs(),
+                    ]);
+                }
+            }
+        };
+
         watch([filters, selectedWarehouse], (newVal, oldVal) => {
             axiosAdmin.post("dashboard", filters).then((response) => {
                 responseData.value = response.data;
@@ -507,6 +586,10 @@ export default {
             formatAmountCurrency,
             permsArray,
             appSetting,
+
+            serachDateRangePicker,
+            activeDateSelector,
+            dateSelectorClicked,
         };
     },
 };

@@ -1,19 +1,29 @@
 <template>
-	<div v-if="user">
-		<a-badge>
-			<a-avatar :size="30" :src="user.profile_image_url" />
-			{{ user.name }}
-		</a-badge>
-	</div>
-	<div v-else>
-		<span>
-			{{ $t("user.walk_in_customer") }}
-		</span>
-	</div>
+    <a-typography-link v-if="showLink">
+       <UserLogo :user="user" :size="size" />
+    </a-typography-link>
+	<template v-else>
+		<UserLogo :user="user" :size="size" />
+	</template>
 </template>
 
 <script>
+import UserLogo from "./UserLogo.vue";
+
 export default {
-	props: ["user", "size"],
+	 props: {
+        user: {
+            default: {},
+        },
+		size: {
+            default: 30,
+        },
+        showLink: {
+            default: true,
+        },
+    },
+	components: {
+		UserLogo
+	}
 };
 </script>

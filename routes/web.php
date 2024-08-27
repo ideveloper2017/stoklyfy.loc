@@ -4,6 +4,59 @@ use Examyou\RestAPI\Facades\ApiRoute;
 
 // Admin Routes
 ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
+    ApiRoute::group(['middleware' => ['api.auth.check', 'license-expire']], function () {
+
+        // Dashboard
+        ApiRoute::get('hrm/dashboard/today-attendance-users', ['as' => 'api.hrm.dashboard.today-attendance-users', 'uses' => 'HrmDashboardController@todayAttendanceUsers']);
+        ApiRoute::get('hrm/dashboard/pending-leaves', ['as' => 'api.hrm.dashboard.pending-leaves', 'uses' => 'HrmDashboardController@pendingLeaves']);
+        ApiRoute::get('hrm/today-attendance-details', ['as' => 'api.hrm.dashboard.today_attendance', 'uses' => 'HrmDashboardController@getTodayAttendanceDetails']);
+        ApiRoute::post('hrm/mark-attendance', ['as' => 'api.hrm.dashboard.mark_attendance', 'uses' => 'HrmDashboardController@markTodayAttendance']);
+        ApiRoute::post('hrm/update-settings', ['as' => 'api.hrm.update-settings', 'uses' => 'HrmDashboardController@updateHrmSettings']);
+
+        ApiRoute::get('shifts', ['as' => 'api.shifts.index', 'uses' => 'ShiftController@index']);
+        ApiRoute::get('departments', ['as' => 'api.departments.index', 'uses' => 'DepartmentController@index']);
+        ApiRoute::get('designations', ['as' => 'api.designations.index', 'uses' => 'DesignationController@index']);
+        ApiRoute::get('holidays', ['as' => 'api.holidays.index', 'uses' => 'HolidayController@index']);
+        ApiRoute::get('leave-types', ['as' => 'api.leave-types.index', 'uses' => 'LeaveTypeController@index']);
+        ApiRoute::get('awards', ['as' => 'api.awards.index', 'uses' => 'AwardController@index']);
+        ApiRoute::get('appreciations', ['as' => 'api.appreciations.index', 'uses' => 'AppreciationController@index']);
+        ApiRoute::get('attendances', ['as' => 'api.attendances.index', 'uses' => 'AttendanceController@index']);
+        ApiRoute::get('increments-promotions', ['as' => 'api.increments-promotions.index', 'uses' => 'IncrementPromotionController@index']);
+        ApiRoute::get('payrolls', ['as' => 'api.payrolls.index', 'uses' => 'PayrollController@index']);
+        ApiRoute::get('pre-payments', ['as' => 'api.pre-payments.index', 'uses' => 'PrePaymentController@index']);
+
+        // Leaves will be visible to everyone
+        // For other route controller level permission applied
+        ApiRoute::post('add-users-attendance', ['as' => 'api.leaves.add-users-attendance', 'uses' => 'LeaveController@addUserAttendance']);
+        ApiRoute::post('leaves/update-status/{id}', ['as' => 'api.leaves.update-status', 'uses' => 'LeaveController@statusUpdate']);
+        ApiRoute::get('leaves/remaining-leaves', ['as' => 'api.leaves.remaining-leaves', 'uses' => 'LeaveController@remainingLeaves']);
+        ApiRoute::get('leaves/unpaid-leaves', ['as' => 'api.leaves.unpaid-leaves', 'uses' => 'LeaveController@unpaidLeaves']);
+        ApiRoute::resource('leaves', 'LeaveController', ['as' => 'api']);
+    });
+    ApiRoute::group(['middleware' => ['api.permission.check', 'api.auth.check', 'license-expire']], function () {
+        $options = [
+            'as' => 'api'
+        ];
+
+        ApiRoute::resource('shifts', 'ShiftController', ['as' => 'api', 'except' => ['index']]);
+        ApiRoute::resource('departments', 'DepartmentController', ['as' => 'api', 'except' => ['index']]);
+        ApiRoute::resource('designations', 'DesignationController', ['as' => 'api', 'except' => ['index']]);
+        ApiRoute::post('mark-holidays', ['as' => 'api.mark-holidays', 'uses' => 'HolidayController@markHoliday']);
+        ApiRoute::resource('holidays', 'HolidayController', ['as' => 'api', 'except' => ['index']]);
+        ApiRoute::resource('leave-types', 'LeaveTypeController', ['as' => 'api', 'except' => ['index']]);
+        ApiRoute::resource('awards', 'AwardController', ['as' => 'api', 'except' => ['index']]);
+        ApiRoute::resource('appreciations', 'AppreciationController', ['as' => 'api', 'except' => ['index']]);
+
+        ApiRoute::resource('pre-payments', 'PrePaymentController', ['as' => 'api', 'except' => ['index']]);
+        ApiRoute::get('attendances/summary-month', ['as' => 'api.attendances.summary-month', 'uses' => 'AttendanceController@attendaceSummaryByMonth']);
+        ApiRoute::get('attendances/summary', ['as' => 'api.attendances.summary', 'uses' => 'AttendanceController@attendaceSummary']);
+        ApiRoute::resource('attendances', 'AttendanceController', ['as' => 'api', 'except' => ['index']]);
+        ApiRoute::resource('increments-promotions', 'IncrementPromotionController', ['as' => 'api', 'except' => ['index']]);
+        ApiRoute::post('payrolls/generate', ['as' => 'api.payrolls.generate', 'uses' => 'PayrollController@payrollGenerate']);
+        ApiRoute::post('payrolls/update-status', ['as' => 'api.payrolls.update-status', 'uses' => 'PayrollController@updateStatus']);
+        ApiRoute::resource('payrolls', 'PayrollController',  ['as' => 'api', 'except' => ['index']]);
+        ApiRoute::resource('basic-salaries', 'BasicSalaryController', $options);
+    });
     ApiRoute::get('all-langs', ['as' => 'api.extra.all-langs', 'uses' => 'AuthController@allEnabledLangs']);
     ApiRoute::get('pdf/{uniqueId}/{lang?}', ['as' => 'api.extra.pdf', 'uses' => 'AuthController@pdf']);
     ApiRoute::get('latest-product-skucode', ['as' => 'api.extra.latest-product-skucode', 'uses' => 'ProductController@getLastProductSkuCode']);
@@ -121,5 +174,63 @@ ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
         ApiRoute::resource('stock-transfers', 'StockTransferController', $options);
         ApiRoute::resource('sales', 'SalesController', $options);
         ApiRoute::resource('sales-returns', 'SalesReturnsController', $options);
+    });
+});
+//for hrm
+ApiRoute::group(['namespace' => 'App\Http\Controllers\Api\Hrm'], function () {
+
+    ApiRoute::group(['middleware' => ['api.auth.check', 'license-expire']], function () {
+
+        // Dashboard
+        ApiRoute::get('hrm/dashboard/today-attendance-users', ['as' => 'api.hrm.dashboard.today-attendance-users', 'uses' => 'HrmDashboardController@todayAttendanceUsers']);
+        ApiRoute::get('hrm/dashboard/pending-leaves', ['as' => 'api.hrm.dashboard.pending-leaves', 'uses' => 'HrmDashboardController@pendingLeaves']);
+        ApiRoute::get('hrm/today-attendance-details', ['as' => 'api.hrm.dashboard.today_attendance', 'uses' => 'HrmDashboardController@getTodayAttendanceDetails']);
+        ApiRoute::post('hrm/mark-attendance', ['as' => 'api.hrm.dashboard.mark_attendance', 'uses' => 'HrmDashboardController@markTodayAttendance']);
+        ApiRoute::post('hrm/update-settings', ['as' => 'api.hrm.update-settings', 'uses' => 'HrmDashboardController@updateHrmSettings']);
+
+        ApiRoute::get('shifts', ['as' => 'api.shifts.index', 'uses' => 'ShiftController@index']);
+        ApiRoute::get('departments', ['as' => 'api.departments.index', 'uses' => 'DepartmentController@index']);
+        ApiRoute::get('designations', ['as' => 'api.designations.index', 'uses' => 'DesignationController@index']);
+        ApiRoute::get('holidays', ['as' => 'api.holidays.index', 'uses' => 'HolidayController@index']);
+        ApiRoute::get('leave-types', ['as' => 'api.leave-types.index', 'uses' => 'LeaveTypeController@index']);
+        ApiRoute::get('awards', ['as' => 'api.awards.index', 'uses' => 'AwardController@index']);
+        ApiRoute::get('appreciations', ['as' => 'api.appreciations.index', 'uses' => 'AppreciationController@index']);
+        ApiRoute::get('attendances', ['as' => 'api.attendances.index', 'uses' => 'AttendanceController@index']);
+        ApiRoute::get('increments-promotions', ['as' => 'api.increments-promotions.index', 'uses' => 'IncrementPromotionController@index']);
+        ApiRoute::get('payrolls', ['as' => 'api.payrolls.index', 'uses' => 'PayrollController@index']);
+        ApiRoute::get('pre-payments', ['as' => 'api.pre-payments.index', 'uses' => 'PrePaymentController@index']);
+
+        // Leaves will be visible to everyone
+        // For other route controller level permission applied
+        ApiRoute::post('add-users-attendance', ['as' => 'api.leaves.add-users-attendance', 'uses' => 'LeaveController@addUserAttendance']);
+        ApiRoute::post('leaves/update-status/{id}', ['as' => 'api.leaves.update-status', 'uses' => 'LeaveController@statusUpdate']);
+        ApiRoute::get('leaves/remaining-leaves', ['as' => 'api.leaves.remaining-leaves', 'uses' => 'LeaveController@remainingLeaves']);
+        ApiRoute::get('leaves/unpaid-leaves', ['as' => 'api.leaves.unpaid-leaves', 'uses' => 'LeaveController@unpaidLeaves']);
+        ApiRoute::resource('leaves', 'LeaveController', ['as' => 'api']);
+    });
+
+    ApiRoute::group(['middleware' => ['api.permission.check', 'api.auth.check', 'license-expire']], function () {
+        $options = [
+            'as' => 'api'
+        ];
+
+        ApiRoute::resource('shifts', 'ShiftController', ['as' => 'api', 'except' => ['index']]);
+        ApiRoute::resource('departments', 'DepartmentController', ['as' => 'api', 'except' => ['index']]);
+        ApiRoute::resource('designations', 'DesignationController', ['as' => 'api', 'except' => ['index']]);
+        ApiRoute::post('mark-holidays', ['as' => 'api.mark-holidays', 'uses' => 'HolidayController@markHoliday']);
+        ApiRoute::resource('holidays', 'HolidayController', ['as' => 'api', 'except' => ['index']]);
+        ApiRoute::resource('leave-types', 'LeaveTypeController', ['as' => 'api', 'except' => ['index']]);
+        ApiRoute::resource('awards', 'AwardController', ['as' => 'api', 'except' => ['index']]);
+        ApiRoute::resource('appreciations', 'AppreciationController', ['as' => 'api', 'except' => ['index']]);
+
+        ApiRoute::resource('pre-payments', 'PrePaymentController', ['as' => 'api', 'except' => ['index']]);
+        ApiRoute::get('attendances/summary-month', ['as' => 'api.attendances.summary-month', 'uses' => 'AttendanceController@attendaceSummaryByMonth']);
+        ApiRoute::get('attendances/summary', ['as' => 'api.attendances.summary', 'uses' => 'AttendanceController@attendaceSummary']);
+        ApiRoute::resource('attendances', 'AttendanceController', ['as' => 'api', 'except' => ['index']]);
+        ApiRoute::resource('increments-promotions', 'IncrementPromotionController', ['as' => 'api', 'except' => ['index']]);
+        ApiRoute::post('payrolls/generate', ['as' => 'api.payrolls.generate', 'uses' => 'PayrollController@payrollGenerate']);
+        ApiRoute::post('payrolls/update-status', ['as' => 'api.payrolls.update-status', 'uses' => 'PayrollController@updateStatus']);
+        ApiRoute::resource('payrolls', 'PayrollController',  ['as' => 'api', 'except' => ['index']]);
+        ApiRoute::resource('basic-salaries', 'BasicSalaryController', $options);
     });
 });

@@ -4,16 +4,24 @@ import axios from "axios";
 import { find, includes, remove, replace } from "lodash-es";
 import store from '../store';
 
-import AuthRoutes from './auth';
-import DashboardRoutes from './dashboard';
-import ProductRoutes from './products';
-import StockRoutes from './stocks';
-import ExpensesRoutes from './expenses';
-import UserRoutes from './users';
-import SettingRoutes from './settings';
-import ReportsRoutes from './reports';
-import SetupAppRoutes from './setupApp';
-import { checkUserPermission } from '../../common/scripts/functions';
+import AuthRoutes from "./auth";
+import DashboardRoutes from "./dashboard";
+import ProductRoutes from "./products";
+import StockRoutes from "./stocks";
+import ExpensesRoutes from "./expenses";
+import UserRoutes from "./users";
+import SettingRoutes from "./settings";
+import ReportsRoutes from "./reports";
+import SetupAppRoutes from "./setupApp";
+import StaffRoutes from "./hrm/staff";
+import LeaveRoutes from "./hrm/leaves";
+import HolidayRoutes from "./hrm/holiday";
+import AttendanceRoutes from "./hrm/attendance";
+import PayrollRoutes from "./hrm/payroll";
+import AppreciationRoutes from "./hrm/appreciations";
+import HrmDashboardRoutes from "./hrm/hrmDashboard";
+import HrmSettingsRoutes from "./hrm/hrmSettings";
+import { checkUserPermission } from "../../common/scripts/functions";
 
 import FrontRoutes from './front';
 import WebsiteSetupRoutes from './websiteSetup';
@@ -58,6 +66,14 @@ const router = createRouter({
         ...UserRoutes,
         ...ReportsRoutes,
         ...SettingRoutes,
+        ...StaffRoutes,
+        ...LeaveRoutes,
+        ...HolidayRoutes,
+        ...AttendanceRoutes,
+        ...PayrollRoutes,
+        ...AppreciationRoutes,
+        ...HrmDashboardRoutes,
+        ...HrmSettingsRoutes,
     ],
     scrollBehavior: () => ({ left: 0, top: 0 }),
 });

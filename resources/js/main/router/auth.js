@@ -1,23 +1,29 @@
-import Login from '../views/auth/Login.vue';
-import Verify from '../views/auth/Verify.vue';
-
 export default [
     {
-        path: '/admin/login',
-        component: Login,
-        name: 'admin.login',
+        path: "/admin/login",
+        component: () => import("../views/auth/Login.vue"),
+        name: "admin.login",
         meta: {
             requireUnauth: true,
-            menuKey: route => "login",
-        }
+            menuKey: (route) => "login",
+        },
     },
     {
-        path: '/admin/verify',
-        component: Verify,
-        name: 'verify.main',
+        path: "/admin/verify",
+        component: () => import("../views/auth/Verify.vue"),
+        name: "verify.main",
         meta: {
             requireUnauth: true,
-            menuKey: route => "verify_product",
-        }
+            menuKey: (route) => "verify_product",
+        },
     },
-]
+    {
+        path: "/admin/reset/:id",
+        component: () => import("../views/auth/ResetPassword.vue"),
+        name: "admin.reset",
+        meta: {
+            requireUnauth: true,
+            menuKey: (route) => "reset",
+        },
+    },
+];
