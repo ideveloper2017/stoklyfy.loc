@@ -161,7 +161,7 @@
                         </a-col>
                         <a-col :xs="24" :sm="24" :md="12" :lg="12">
                             <a-form-item
-                                :label="$t('product.sales_price')"
+                                :label="$t('product.sku')"
                                 name="sku"
                                 :help="rules.sku ? rules.sku.message : null"
                                 :validateStatus="rules.sku ? 'error' : null"
@@ -796,6 +796,7 @@ export default defineComponent({
         WarehouseAddButton,
         AddEditVariant,
     },
+
     setup(props, { emit }) {
         const { addEditRequestAdmin, loading, rules } = apiAdmin();
         const {
@@ -836,6 +837,8 @@ export default defineComponent({
         };
 
 
+
+
         onMounted(() => {
             moment.suppressDeprecationWarnings = true;
             const brandsPromise = axiosAdmin.get(brandsUrl);
@@ -845,7 +848,7 @@ export default defineComponent({
             const customFieldsPromise = axiosAdmin.get(customFieldsUrl);
             const warehousesPromise = axiosAdmin.get(warehouseUrl);
             const variationsPromise = axiosAdmin.get(variationsUrl);
-            const productSkuCode= axiosAdmin.get(productSkuCodeUrl);
+           // const productSkuCode= axiosAdmin.get(productSkuCodeUrl);
 
             Promise.all([
                 brandsPromise,
@@ -855,7 +858,7 @@ export default defineComponent({
                 customFieldsPromise,
                 warehousesPromise,
                 variationsPromise,
-                productSkuCode
+              //  productSkuCode
             ]).then(
                 ([
                     brandsResponse,
@@ -865,7 +868,7 @@ export default defineComponent({
                     customFieldsResponse,
                     warehousesResponse,
                     variationsResponse,
-                    productSkuCodeResponse,
+                   // productSkuCodeResponse,
                 ]) => {
                     brands.value = brandsResponse.data;
                     units.value = unitsResponse.data;
@@ -873,17 +876,20 @@ export default defineComponent({
                     customFields.value = customFieldsResponse.data;
                     warehouses.value = warehousesResponse.data;
                     variations.value = variationsResponse.data;
-                    productSkuCode.value=productSkuCodeResponse.data;
+                    //productSkuCode.value=productSkuCodeResponse.data;
                     selectedUnit.value = find(units.value, [
                         "xid",
                         props.formData.unit_id,
                     ]);
 
                     // props.formData.sku=productSkuCodeResponse.data.product_sku_code;
-                    getProductSkuCode();
+
                     setCategories(categoriesResponse.data);
+                    getProductSkuCode();
                 }
+
             );
+
         });
 
         const setCategories = (categoryResponseData) => {
@@ -931,6 +937,7 @@ export default defineComponent({
                 productSkuCode
             ]).then(([productSkuCodeResponse])=> {
                 props.formData.sku =`${appSetting.value.product_code_prefix+''+productSkuCodeResponse.data.product_sku_code}`;
+                console.log(props.formData.sku, 'jioi');
             });
 
         }
@@ -1089,6 +1096,9 @@ export default defineComponent({
             () => props.visible,
             (newVal, oldVal) => {
                 if (newVal == true) {
+                    if (props.addEditType == "add") {
+                        getProductSkuCode();
+                    }
                     resetDataAfterModalVisible();
                 }
             }

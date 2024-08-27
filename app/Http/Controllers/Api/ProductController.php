@@ -510,7 +510,7 @@ class ProductController extends ApiBaseController
 
     public function getLastProductSkuCode()
     {
-        $productCode = Product::latest()->first()?Product::latest()->first()->id:1;
+        $productCode = Product::latest()->first()?Product::latest()->first()->id+1:1;
         $formattedCode = str_pad($productCode, 5, "0", STR_PAD_LEFT);
         return ApiResponse::make('Ok',['product_sku_code'=>$formattedCode]);
     }
