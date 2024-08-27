@@ -177,7 +177,7 @@
                             "
                                     min="0"
                                     style="width: 100%"
-                                    @click="getProductSkuCode"
+
                                 >
 <!--                                    <template #addonBefore>-->
 <!--                                        {{ appSetting.product_code_prefix }}-->
@@ -186,6 +186,7 @@
                                         <a-button
                                             type="text"
                                             size="small"
+                                            @click="getProductSkuCode"
                                         >
                                             <template #icon>
                                                 <PlusOutlined />
@@ -834,6 +835,7 @@ export default defineComponent({
             // addVariationField();
         };
 
+
         onMounted(() => {
             moment.suppressDeprecationWarnings = true;
             const brandsPromise = axiosAdmin.get(brandsUrl);
@@ -924,6 +926,7 @@ export default defineComponent({
 
         const getProductSkuCode=()=>{
             const productSkuCode= axiosAdmin.get(productSkuCodeUrl);
+
             Promise.all([
                 productSkuCode
             ]).then(([productSkuCodeResponse])=> {
@@ -957,7 +960,7 @@ export default defineComponent({
                         emit("addAndNewSuccess", res.xid);
 
                         resetDataAfterModalVisible();
-                        getProductSkuCode();
+
 
                     } else if (sbumitType == "add-continue") {
                         emit("addAndContinueSuccess", res.xid);
@@ -965,7 +968,7 @@ export default defineComponent({
                         props.formData.slug = slugify(props.formData.name);
 
                         generateBarCode();
-                        getProductSkuCode();
+
 
                         // Also reset the variations
                         var allNewVariationsData = [];
