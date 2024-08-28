@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Classes\Common;
+use App\Classes\Output;
 use App\Http\Controllers\ApiBaseController;
+use App\Http\Requests\Api\Auth\ForgotPasswordRequest;
 use App\Http\Requests\Api\Auth\LoginRequest;
 use App\Http\Requests\Api\Auth\ProfileRequest;
 use App\Http\Requests\Api\Auth\RefreshTokenRequest;
+use App\Http\Requests\Api\Auth\ResetPasswordRequest;
 use App\Http\Requests\Api\Auth\UploadFileRequest;
 use App\Models\Company;
 use App\Models\Currency;
@@ -15,16 +18,17 @@ use App\Models\Expense;
 use App\Models\Lang;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\OrderPayment;
 use App\Models\Payment;
 use App\Models\PaymentMode;
 use App\Models\Product;
 use App\Models\Settings;
 use App\Models\StaffMember;
 use App\Models\Translation;
-use App\Models\Unit;
 use App\Models\User;
 use App\Models\UserWarehouse;
 use App\Models\Warehouse;
+use App\Notifications\ResetPasswordEmail;
 use App\Scopes\CompanyScope;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -32,6 +36,10 @@ use Examyou\RestAPI\ApiResponse;
 use Examyou\RestAPI\Exceptions\ApiException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
+use Milon\Barcode\DNS1D;
+use Illuminate\Support\Str;
+use PDF;
 
 
 class AuthController extends ApiBaseController
@@ -102,6 +110,49 @@ class AuthController extends ApiBaseController
         ]);
     }
 
+    // public function pdf($uniqueId, $langKey = "en")
+    // {
+    //     $order = Order::with(['warehouse', 'user', 'items', 'items.product', 'items.unit', 'orderPayments:id,order_id,payment_id,amount', 'orderPayments.payment:id,payment_mode_id', 'orderPayments.payment.paymentMode:id,name'])
+    //         ->where('unique_id', $uniqueId)
+    //         ->first();
+
+    //     $lang = Lang::where('key', $langKey)->first();
+    //     if (!$lang) {
+    //         $lang = Lang::where('key', 'en')->first();
+    //     }
+
+    //     $invoiceTranslation = Translation::where('lang_id', $lang->id)
+    //         ->where('group', 'invoice')
+    //         ->pluck('value', 'key')
+    //         ->toArray();
+
+    //     $orderStatusText = Common::getTranslationText($order->order_status, $lang->id);
+    //     $paymentStatusText = Common::getTranslationText($order->payment_status, $lang->id);
+
+    //     $warehouse = Warehouse::withoutGlobalScope(CompanyScope::class)->find($order->warehouse_id);
+    //     $staffMember = StaffMember::withoutGlobalScope(CompanyScope::class)->find($order->staff_user_id);
+
+    //     $pdfData = [
+    //         'orderStatusText' => $orderStatusText,
+    //         'paymentStatusText' => $paymentStatusText,
+    //         'order' => $order,
+    //         'company' => Company::with('currency')->find($order->company_id),
+    //         'dateTimeFormat' => 'd-m-Y',
+    //         'traslations' => $invoiceTranslation,
+    //         'warehouse' => $warehouse,
+    //         'staffMember' => $staffMember
+    //     ];
+
+    //   $html = view('pdf', $pdfData);
+
+    //     // $pdf = app('dompdf.wrapper');
+    //     // $pdf->loadHTML($html);
+    //     // return $pdf->download($order->invoice_number . '.pdf');
+    //     $pdf = PDF::loadView('pdf', $pdfData);
+    //     return $pdf->stream($order->invoice_number . '.pdf');
+
+    // }
+
     public function pdf($uniqueId, $langKey = "uz")
     {
         $order = Order::with(['warehouse', 'user', 'items', 'items.product', 'items.unit', 'orderPayments:id,order_id,payment_id,amount', 'orderPayments.payment:id,payment_mode_id', 'orderPayments.payment.paymentMode:id,name'])
@@ -112,6 +163,12 @@ class AuthController extends ApiBaseController
         if (!$lang) {
             $lang = Lang::where('key', 'uz')->first();
         }
+        $items = $order->items;
+        foreach ($items as $product) {
+            $productId = $product->product_id;
+        }
+        $product = Product::find($productId);
+        $itemCode = $product->item_code;
 
         $invoiceTranslation = Translation::where('lang_id', $lang->id)
             ->where('group', 'invoice')
@@ -119,10 +176,12 @@ class AuthController extends ApiBaseController
             ->toArray();
 
         $orderStatusText = Common::getTranslationText($order->order_status, $lang->id);
-        $paymentStatusText = Common::getTranslationText($order->payment_status, $lang->id);
+        $paymentStatusText = Common::getTranslationText($order->payment_status, $lang->id, 'payments');
 
         $warehouse = Warehouse::withoutGlobalScope(CompanyScope::class)->find($order->warehouse_id);
         $staffMember = StaffMember::withoutGlobalScope(CompanyScope::class)->find($order->staff_user_id);
+        $customer = Customer::withoutGlobalScope(CompanyScope::class)->find($order->user_id);
+        // $orderPayments = ($order->orderPayments);
 
         $pdfData = [
             'orderStatusText' => $orderStatusText,
@@ -132,13 +191,19 @@ class AuthController extends ApiBaseController
             'dateTimeFormat' => 'd-m-Y',
             'traslations' => $invoiceTranslation,
             'warehouse' => $warehouse,
-            'staffMember' => $staffMember
+            'staffMember' => $staffMember,
+            'customer' =>  $customer
+            // 'barcodeData' => DNS1D::getBarcodePNG("3243243243", 'C128'),
         ];
 
-        $html = view('pdf', $pdfData);
 
-        $pdf = app('dompdf.wrapper');
-        $pdf->loadHTML($html);
+        // return $html = view('pdf', $pdfData);
+
+        $pdf = PDF::loadView('pdf', $pdfData);
+
+        // $pdf = app('dompdf.wrapper');
+        // $pdf->loadHTML($html);
+        //    return $pdf->stream('document.pdf');
         return $pdf->download($order->invoice_number . '.pdf');
     }
 
@@ -197,8 +262,91 @@ class AuthController extends ApiBaseController
         $response['shortcut_menus'] = $addMenuSetting;
         $response['email_setting_verified'] = $this->emailSettingVerified();
         $response['visible_subscription_modules'] = Common::allVisibleSubscriptionModules();
-        $response['unit']=Unit::query()->get();
+
         return ApiResponse::make('Loggged in successfull', $response);
+    }
+
+    public function forgotPassword(ForgotPasswordRequest $request)
+    {
+        $phone = "";
+        $email = "";
+
+        $credentials = [];
+
+        if (is_numeric($request->get('email'))) {
+            $credentials['phone'] = $request->email;
+            $phone = $request->email;
+        } else {
+            $credentials['email'] = $request->email;
+            $email = $request->email;
+        }
+
+        // For checking user
+        $user = User::select('*');
+        if ($email != '') {
+            $user = $user->where('email', $email);
+        } else if ($phone != '') {
+            $user = $user->where('phone', $phone);
+        }
+        $user = $user->first();
+
+        if ($user == null || $user == '') {
+            throw new ApiException('Entered email or password do not match our records.');
+        } else {
+            $token = Str::random(32);
+            $user->reset_password_token = $token;
+            $user->save();
+            $templateSubject = 'Reset New Password';
+
+            $mailData = [
+                'name' => ucwords($user->name),
+                'url' => url('/admin/reset/' . $token)
+            ];
+
+            $emailSettingEnabled = Settings::withoutGlobalScope(CompanyScope::class)->where('setting_type', 'email')
+                ->where('name_key', 'smtp');
+
+            if (app_type() == 'saas') {
+                $emailSettingEnabled = $emailSettingEnabled->where('is_global', 1);
+            } else {
+                $emailSettingEnabled = $emailSettingEnabled->where('is_global', 0);
+            }
+
+            $emailSettingEnabled = $emailSettingEnabled->first();
+
+
+
+            if ($emailSettingEnabled->status == 1 && $emailSettingEnabled->verified == 1) {
+
+                Notification::route('mail', $user->email)
+                    ->notify(new ResetPasswordEmail($templateSubject, $mailData));
+
+                $message = 'Reset Password link send to your registered email.. check your inbox.';
+
+                return Output::success($message);
+            } else {
+                return Output::error('Email is not setup.. contact to app service provider.');
+            }
+        }
+    }
+
+    public function resetPassword(ResetPasswordRequest $request)
+    {
+        if (isset($request->token)) {
+            $findUser = User::where('reset_password_token', $request->token)->first();
+            if ($findUser == '' || $findUser == null) {
+                throw new ApiException('Reset password link expired.');
+            } else {
+                if ($request->new_password == $request->confirm_password) {
+                    $findUser->password = $request->new_password;
+                    $findUser->reset_password_token = null;
+                    $findUser->save();
+                    return Output::success('Reset password successfully ... ');
+                } else {
+                    throw new ApiException('Entered New Password do not match with Confirm Password.');
+                }
+            }
+        }
     }
 
     protected function respondWithToken($token)
@@ -551,10 +699,12 @@ class AuthController extends ApiBaseController
         foreach ($maxSellingProducts as $maxSellingProduct) {
             $product = Product::select('name')->find($maxSellingProduct->product_id);
 
-            $topSellingProductsNames[] = $product->name;
-            $topSellingProductsValues[] = $maxSellingProduct->total_amount;
-            $topSellingProductsColors[] = $colors[$counter];
-            $counter++;
+            if ($product) {
+                $topSellingProductsNames[] = $product->name;
+                $topSellingProductsValues[] = $maxSellingProduct->total_amount;
+                $topSellingProductsColors[] = $colors[$counter];
+                $counter++;
+            }
         }
 
         return [

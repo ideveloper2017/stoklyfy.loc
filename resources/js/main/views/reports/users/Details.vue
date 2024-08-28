@@ -49,7 +49,7 @@
 <script>
 import { defineComponent, reactive, ref, watch, onMounted } from "vue";
 import common from "../../../../common/composable/common";
-import OrderTable from "../../../components/order/OrderTable.vue";
+import OrderTable from "../../../components/order/OrderTable1.vue";
 import DateRangePicker from "../../../../common/components/common/calendar/DateRangePicker.vue";
 
 export default defineComponent({

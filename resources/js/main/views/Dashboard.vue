@@ -435,7 +435,7 @@ import PurchaseSales from "../components/charts/dashboard/PurchaseSales.vue";
 import PaymentsChart from "../components/charts/dashboard/PaymentsChart.vue";
 import StateWidget from "../../common/components/common/card/StateWidget.vue";
 import Tiimeline from "../components/stock-history/Tiimeline.vue";
-import OrderTable from "../components/order/OrderTable.vue";
+import OrderTable from "../components/order/OrderTable1.vue";
 import UserInfo from "../../common/components/user/UserInfo.vue";
 import DateRangePicker from "../../common/components/common/calendar/DateRangePicker.vue";
 import UpdateAppAlert from "./UpdateAppAlert.vue";

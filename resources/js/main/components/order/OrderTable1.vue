@@ -25,39 +25,28 @@
                     :size="tableSize"
                 >
                     <template #bodyCell="{ column, record }">
-                        <template v-if="column.dataIndex === 'invoice_number'">
-                            <a-typography-link @click="viewItem(record)">
-                                {{ record.invoice_number }}
-                            </a-typography-link>
-                        </template>
                         <template v-if="column.dataIndex === 'order_date'">
                             {{ formatDate(record.order_date) }}
                         </template>
                         <template v-if="column.dataIndex === 'warehouse'">
-                            <span
-                                v-if="record.warehouse && record.warehouse.xid"
-                            >
+                            <span v-if="record.warehouse && record.warehouse.xid">
                                 {{ record.warehouse.name }}
                             </span>
                         </template>
-                        <a-typography-link @click="userView(record)">
-                            <template v-if="column.dataIndex === 'user_id'">
-                                <user-info :user="record.user" />
-                            </template>
-                        </a-typography-link>
+                        <template v-if="column.dataIndex === 'user_id'">
+                            <user-info :user="record.user" />
+                        </template>
+                        <template v-if="column.dataIndex === 'quantity'">
+                            {{ record.items.reduce((acc, cur) => acc + parseInt(cur.quantity), 0) }}
+                        </template>
                         <template v-if="column.dataIndex === 'paid_amount'">
                             {{ formatAmountCurrency(record.paid_amount) }}
                         </template>
                         <template v-if="column.dataIndex === 'total_amount'">
                             {{ formatAmountCurrency(record.total) }}
                         </template>
-                        <template v-if="column.dataIndex === 'due_amount'">
-                            {{ formatAmountCurrency(record.due_amount) }}
-                        </template>
                         <template v-if="column.dataIndex === 'payment_status'">
-                            <PaymentStatus
-                                :paymentStatus="record.payment_status"
-                            />
+                            <PaymentStatus :paymentStatus="record.payment_status" />
                         </template>
                         <template v-if="column.dataIndex === 'order_status'">
                             <OrderStatus :data="record" />
@@ -74,10 +63,7 @@
                                     placement="topLeft"
                                     :title="$t('stock.view_order')"
                                 >
-                                    <a-button
-                                        type="primary"
-                                        @click="viewOrder(record)"
-                                    >
+                                    <a-button type="primary" @click="viewOrder(record)">
                                         <template #icon>
                                             <EyeOutlined />
                                         </template>
@@ -107,9 +93,7 @@
                                         record.order_status != 'delivered'
                                     "
                                     placement="topLeft"
-                                    :title="
-                                        $t('online_orders.confirm_delivery')
-                                    "
+                                    :title="$t('online_orders.confirm_delivery')"
                                 >
                                     <a-button
                                         type="primary"
@@ -140,9 +124,7 @@
                                 </a-tooltip>
                             </a-space>
                             <a-dropdown
-                                v-else-if="
-                                    record.order_type == 'stock-transfers'
-                                "
+                                v-else-if="record.order_type == 'stock-transfers'"
                                 placement="bottomRight"
                             >
                                 <MoreOutlined />
@@ -153,8 +135,7 @@
                                             v-if="
                                                 permsArray.includes(
                                                     `${pageObject.permission}_view`
-                                                ) ||
-                                                permsArray.includes('admin')
+                                                ) || permsArray.includes('admin')
                                             "
                                             @click="viewItem(record)"
                                         >
@@ -164,14 +145,11 @@
                                         <a-menu-item
                                             key="edit"
                                             v-if="
-                                                filters.transfer_type ==
-                                                    'transfered' &&
+                                                filters.transfer_type == 'transfered' &&
                                                 (permsArray.includes(
                                                     `${pageObject.permission}_edit`
                                                 ) ||
-                                                    permsArray.includes(
-                                                        'admin'
-                                                    ))
+                                                    permsArray.includes('admin'))
                                             "
                                             @click="
                                                 () =>
@@ -189,86 +167,26 @@
                                         <a-menu-item
                                             key="delete"
                                             v-if="
-                                                filters.transfer_type ==
-                                                    'transfered' &&
+                                                filters.transfer_type == 'transfered' &&
                                                 (permsArray.includes(
                                                     `${pageObject.permission}_delete`
                                                 ) ||
-                                                    permsArray.includes(
-                                                        'admin'
-                                                    )) &&
-                                                record.payment_status ==
-                                                    'unpaid'
+                                                    permsArray.includes('admin')) &&
+                                                record.payment_status == 'unpaid'
                                             "
-                                            @click="
-                                                showDeleteConfirm(record.xid)
-                                            "
+                                            @click="showDeleteConfirm(record.xid)"
                                         >
                                             <DeleteOutlined />
                                             {{ $t("common.delete") }}
                                         </a-menu-item>
-
-                                        <a-menu-divider />
-
-                                        <a-menu-item
-                                            key="view_payments"
-                                            v-if="
-                                              (  permsArray.includes(
-                                                    `${pageObject.permission}_view`
-                                                ) ||
-                                                permsArray.includes('admin')) ||
-                                                record.payment_status !=
-                                                    'unpaid'
-                                            "
-                                            @click="viewPaymentDetails(record)"
-                                        >
-                                            <WalletOutlined />
-                                            {{ $t("payments.view_payments") }}
-                                        </a-menu-item>
-
-                                        <a-menu-item
-                                            key="payments"
-                                            v-if="
-                                                (permsArray.includes(
-                                                    'order_payments_view'
-                                                ) ||
-                                                permsArray.includes('admin')
-                                                    ? 'payments'
-                                                    : 'order_items') &&
-                                                record.payment_status != 'paid'
-                                            "
-                                            @click="addItem(record)"
-                                        >
-                                            <DollarCircleOutlined />
-                                            {{ $t("payments.add") }}
-                                        </a-menu-item>
-
-                                        <a-menu-item key="download_invoice">
+                                        <a-menu-item key="download">
                                             <a-typography-link
                                                 :href="`${invoiceBaseUrl}/${record.unique_id}/${selectedLang}`"
                                                 target="_blank"
                                             >
                                                 <DownloadOutlined />
-                                                {{
-                                                    $t(
-                                                        "common.download_invoice"
-                                                    )
-                                                }}
+                                                {{ $t("common.download") }}
                                             </a-typography-link>
-                                        </a-menu-item>
-
-                                        <a-menu-divider />
-
-                                        <a-menu-item
-                                            key="print_pdf_invoice"
-                                            @click="
-                                                printInvoicePDF(
-                                                    `${invoiceBaseUrl}/${record.unique_id}/${selectedLang}`
-                                                )
-                                            "
-                                        >
-                                            <PrinterOutlined />
-                                            {{ $t("common.print_invoice") }}
                                         </a-menu-item>
                                     </a-menu>
                                 </template>
@@ -283,26 +201,20 @@
                                                 (permsArray.includes(
                                                     `${pageObject.permission}_view`
                                                 ) ||
-                                                    permsArray.includes(
-                                                        'admin'
-                                                    )) &&
-                                                record.order_type ==
-                                                    'quotations'
+                                                    permsArray.includes('admin')) &&
+                                                record.order_type == 'quotations'
                                             "
                                             @click="convertToSale(record)"
                                         >
                                             <SisternodeOutlined />
-                                            {{
-                                                $t("quotation.convert_to_sale")
-                                            }}
+                                            {{ $t("quotation.convert_to_sale") }}
                                         </a-menu-item>
                                         <a-menu-item
                                             key="view"
                                             v-if="
                                                 permsArray.includes(
                                                     `${pageObject.permission}_view`
-                                                ) ||
-                                                permsArray.includes('admin')
+                                                ) || permsArray.includes('admin')
                                             "
                                             @click="viewItem(record)"
                                         >
@@ -312,14 +224,11 @@
                                         <a-menu-item
                                             key="edit"
                                             v-if="
-                                                record.order_type !=
-                                                    'online-orders' &&
+                                                record.order_type != 'online-orders' &&
                                                 (permsArray.includes(
                                                     `${pageObject.permission}_edit`
                                                 ) ||
-                                                    permsArray.includes(
-                                                        'admin'
-                                                    ))
+                                                    permsArray.includes('admin'))
                                             "
                                             @click="
                                                 () =>
@@ -337,39 +246,17 @@
                                         <a-menu-item
                                             key="delete"
                                             v-if="
-                                                record.order_type !=
-                                                    'online-orders' &&
+                                                record.order_type != 'online-orders' &&
                                                 (permsArray.includes(
                                                     `${pageObject.permission}_delete`
                                                 ) ||
-                                                    permsArray.includes(
-                                                        'admin'
-                                                    )) &&
-                                                record.payment_status ==
-                                                    'unpaid'
+                                                    permsArray.includes('admin')) &&
+                                                record.payment_status == 'unpaid'
                                             "
-                                            @click="
-                                                showDeleteConfirm(record.xid)
-                                            "
+                                            @click="showDeleteConfirm(record.xid)"
                                         >
                                             <DeleteOutlined />
                                             {{ $t("common.delete") }}
-                                        </a-menu-item>
-
-                                        <a-menu-divider />
-
-                                        <a-menu-item
-                                            key="view_payments"
-                                            v-if="
-                                                permsArray.includes(
-                                                    `${pageObject.permission}_view`
-                                                ) ||
-                                                permsArray.includes('admin')
-                                            "
-                                            @click="viewPaymentDetails(record)"
-                                        >
-                                            <WalletOutlined />
-                                            {{ $t("payments.view_payments") }}
                                         </a-menu-item>
                                         <a-menu-item
                                             key="payments"
@@ -403,33 +290,14 @@
                                             <ShoppingCartOutlined />
                                             {{ $t("common.pos_invoice") }}
                                         </a-menu-item>
-
-                                        <a-menu-item key="download_invoice">
+                                        <a-menu-item key="download">
                                             <a-typography-link
                                                 :href="`${invoiceBaseUrl}/${record.unique_id}/${selectedLang}`"
                                                 target="_blank"
                                             >
                                                 <DownloadOutlined />
-                                                {{
-                                                    $t(
-                                                        "common.download_invoice"
-                                                    )
-                                                }}
+                                                {{ $t("common.download") }}
                                             </a-typography-link>
-                                        </a-menu-item>
-
-                                        <a-menu-divider />
-
-                                        <a-menu-item
-                                            key="print_pdf_invoice"
-                                            @click="
-                                                printInvoicePDF(
-                                                    `${invoiceBaseUrl}/${record.unique_id}/${selectedLang}`
-                                                )
-                                            "
-                                        >
-                                            <PrinterOutlined />
-                                            {{ $t("common.print_invoice") }}
                                         </a-menu-item>
                                     </a-menu>
                                 </template>
@@ -449,9 +317,10 @@
                             :pagination="false"
                         >
                             <template #bodyCell="{ column, record }">
-                                <template
-                                    v-if="column.dataIndex === 'product_id'"
-                                >
+                                <template v-if="column.dataIndex === 'category_id'">
+                                        {{ record.product.category.name }}
+                                </template>
+                                <template v-if="column.dataIndex === 'product_id'">
                                     <a-badge>
                                         <a-avatar
                                             shape="square"
@@ -460,41 +329,19 @@
                                         {{ record.product.name }}
                                     </a-badge>
                                 </template>
-                                <template
-                                    v-if="column.dataIndex === 'quantity'"
-                                >
+                                <template v-if="column.dataIndex === 'quantity'">
                                     {{
                                         `${record.quantity} ${record.product.unit.short_name}`
                                     }}
                                 </template>
-                                <template
-                                    v-if="
-                                        column.dataIndex === 'single_unit_price'
-                                    "
-                                >
-                                    {{
-                                        formatAmountCurrency(
-                                            record.single_unit_price
-                                        )
-                                    }}
+                                <template v-if="column.dataIndex === 'single_unit_price'">
+                                    {{ formatAmountCurrency(record.single_unit_price) }}
                                 </template>
-                                <template
-                                    v-if="column.dataIndex === 'total_discount'"
-                                >
-                                    {{
-                                        formatAmountCurrency(
-                                            record.total_discount
-                                        )
-                                    }}
+                                <template v-if="column.dataIndex === 'total_discount'">
+                                    {{ formatAmountCurrency(record.total_discount) }}
                                 </template>
-                                <template
-                                    v-if="column.dataIndex === 'total_tax'"
-                                >
-                                    <span
-                                        v-if="
-                                            record.order_item_taxes.length > 0
-                                        "
-                                    >
+                                <template v-if="column.dataIndex === 'total_tax'">
+                                    <span v-if="record.order_item_taxes.length > 0">
                                         <span
                                             v-for="order_item_tax in record.order_item_taxes"
                                             :key="order_item_tax.xid"
@@ -511,56 +358,14 @@
                                         </span>
                                     </span>
                                     <span v-else>
-                                        {{
-                                            formatAmountCurrency(
-                                                record.total_tax
-                                            )
-                                        }}
+                                        {{ formatAmountCurrency(record.total_tax) }}
                                     </span>
                                 </template>
-                                <template
-                                    v-if="column.dataIndex === 'subtotal'"
-                                >
+                                <template v-if="column.dataIndex === 'subtotal'">
                                     {{ formatAmountCurrency(record.subtotal) }}
                                 </template>
                             </template>
                         </a-table>
-                    </template>
-                    <template #summary>
-                        <a-table-summary-row>
-                            <a-table-summary-cell
-                                :col-span="
-                                    selectable && orderType != 'online-orders'
-                                        ? 5
-                                        : 4
-                                "
-                            >
-                            </a-table-summary-cell>
-                            <a-table-summary-cell :col-span="1">
-                                <a-typography-text strong>
-                                    {{ $t("common.total") }}
-                                </a-typography-text>
-                            </a-table-summary-cell>
-                            <a-table-summary-cell :col-span="1">
-                                <a-typography-text strong>
-                                    {{
-                                        formatAmountCurrency(totals.totalAmount)
-                                    }}
-                                </a-typography-text>
-                            </a-table-summary-cell>
-                            <a-table-summary-cell :col-span="1">
-                                <a-typography-text strong>
-                                    {{
-                                        formatAmountCurrency(totals.paidAmount)
-                                    }}
-                                </a-typography-text>
-                            </a-table-summary-cell>
-                            <a-table-summary-cell :col-span="1">
-                                <a-typography-text strong>
-                                    {{ formatAmountCurrency(totals.dueAmount) }}
-                                </a-typography-text>
-                            </a-table-summary-cell>
-                        </a-table-summary-row>
                     </template>
                 </a-table>
             </div>
@@ -573,12 +378,6 @@
         @close="onDetailDrawerClose"
         @goBack="restSelectedItem"
         @reloadOrder="paymentSuccess"
-    />
-
-    <Payments
-        :visible="paymentModalVisible"
-        :order="selectedItem"
-        @close="closePaymentDetails"
     />
 
     <ConfirmOrder
@@ -594,55 +393,37 @@
         @closed="viewModalVisible = false"
     />
 
-    <AddEdit
-        :addEditType="addEditType"
-        :visible="addEditVisible"
-        :url="addEditUrl"
-        @addEditSuccess="addEditSuccess"
-        @closed="onCloseAddEdit"
-        :formData="formData"
-        :data="selectedItem"
-        :editItemAmount="editItemAmount"
-        :pageTitle="pageTitle"
-        :successMessage="successMessage"
-    />
-    <InvoiceVue
-        :visible="printInvoiceModalVisible"
-        :order="printInvoiceOrder"
-        @closed="printInvoiceModalVisible = false"
-    />
-    <View
-        :visible="userVisible"
-        :user="modalData"
-        @closed="userVisible = false"
+    <InvoiceModal
+        :visible="invoiceModalVisible"
+        :order="selectedItem"
+        :customer="selectCustomer"
+        @closed="invoiceModalVisible = false"
     />
 </template>
 
 <script>
-import { onMounted, watch, ref, createVNode, computed } from "vue";
+import { onMounted, watch, ref, createVNode } from "vue";
 import {
     EyeOutlined,
     PlusOutlined,
     EditOutlined,
+    PrinterOutlined,
     DeleteOutlined,
     ExclamationCircleOutlined,
     MoreOutlined,
     DownloadOutlined,
+    ShoppingCartOutlined,
     CheckOutlined,
     StopOutlined,
     SendOutlined,
-    SisternodeOutlined,
     DollarCircleOutlined,
-    WalletOutlined,
-    ShoppingCartOutlined,
-    PrinterOutlined,
+    SisternodeOutlined,
 } from "@ant-design/icons-vue";
-import {Modal, notification} from "ant-design-vue";
-import {useRoute} from "vue-router";
-import {useStore} from "vuex";
-import {find, forEach} from "lodash-es";
-import {useI18n} from "vue-i18n";
-import print from "print-js";
+import { Modal, notification } from "ant-design-vue";
+import { useRoute } from "vue-router";
+import { useStore } from "vuex";
+import { find, forEach } from "lodash-es";
+import { useI18n } from "vue-i18n";
 import fields from "../../views/stock-management/purchases/fields";
 import common from "../../../common/composable/common";
 import datatable from "../../../common/composable/datatable";
@@ -653,10 +434,7 @@ import UserInfo from "../../../common/components/user/UserInfo.vue";
 import OrderDetails from "./OrderDetails.vue";
 import ConfirmOrder from "../../views/stock-management/online-orders/ConfirmOrder.vue";
 import ViewOrder from "../../views/stock-management/online-orders/ViewOrder.vue";
-import AddEdit from "../../views/stock-management/order-payments/AddEdit.vue";
-import InvoiceVue from "../../views/stock-management/purchases/Invoice.vue";
-import Payments from "../../views/stock-management/purchases/payments.vue";
-import View from "../../views/users/View.vue";
+import InvoiceModal from "../../views/stock-management/purchases/Invoice.vue";
 
 export default {
     props: {
@@ -679,34 +457,30 @@ export default {
     },
     emits: ["onRowSelection"],
     components: {
+        InvoiceModal,
         EyeOutlined,
         PlusOutlined,
         EditOutlined,
+        PrinterOutlined,
         DeleteOutlined,
         MoreOutlined,
         DownloadOutlined,
+        ShoppingCartOutlined,
         ExclamationCircleOutlined,
         SisternodeOutlined,
         CheckOutlined,
+        DollarCircleOutlined,
         StopOutlined,
         SendOutlined,
-        WalletOutlined,
-        ShoppingCartOutlined,
-        PrinterOutlined,
-        UserInfo,
         Details,
+        UserInfo,
         PaymentStatus,
         OrderStatus,
         OrderDetails,
         ConfirmOrder,
         ViewOrder,
-        AddEdit,
-        DollarCircleOutlined,
-        InvoiceVue,
-        Payments,
-        View,
     },
-    setup(props, {emit}) {
+    setup(props, { emit }) {
         const store = useStore();
         const {
             columns,
@@ -717,7 +491,6 @@ export default {
             orderType,
             orderStatus,
             orderItemDetailsColumns,
-            initPaymentData,
         } = fields();
         const datatableVariables = datatable();
         const {
@@ -731,44 +504,17 @@ export default {
             orderStatusColors,
         } = common();
         const route = useRoute();
-        const {t} = useI18n();
+        const { t } = useI18n();
         const detailsDrawerVisible = ref(false);
-
+        const invoiceModalVisible = ref(false);
+        const selectCustomer=ref();
         const selectedItem = ref({});
-        const printInvoiceModalVisible = ref(false);
-        const payNowVisible = ref(false);
         const printInvoiceOrder = ref({});
-
         // For Online Orders
         const confirmModalVisible = ref(false);
         const viewModalVisible = ref(false);
-        const paymentModalVisible = ref(false);
-        const userVisible = ref(false);
         const modalData = ref({});
         // End For Online Orders
-
-        const posView = (order) => {
-            console.log(order);
-            var totalMrp = 0;
-            var totalTax = 0;
-            forEach(order.items, (item) => {
-                totalMrp += item.quantity * item.mrp;
-                totalTax += item.total_tax;
-            });
-
-            let savingOnMrp = totalMrp - order.total;
-            let savingPercentage =
-                totalMrp > 0 ? ((savingOnMrp / totalMrp) * 100).toFixed(2) : 0;
-            let totalTaxOnItems = totalTax + order.tax_amount;
-
-            printInvoiceOrder.value = {
-                ...order,
-                saving_on_mrp: savingOnMrp,
-                saving_percentage: savingPercentage,
-                total_tax_on_items: totalTaxOnItems,
-            };
-            printInvoiceModalVisible.value = true;
-        };
 
         onMounted(() => {
             initialSetup();
@@ -780,18 +526,14 @@ export default {
             if (
                 record.order_type == "stock-transfers" &&
                 props.filters.transfer_type == "transfered" &&
-                (permsArray.value.includes(
-                        `${pageObject.value.permission}_delete`
-                    ) ||
+                (permsArray.value.includes(`${pageObject.value.permission}_delete`) ||
                     permsArray.value.includes("admin")) &&
                 record.payment_status == "unpaid"
             ) {
                 isDeleteable = true;
             } else if (
                 record.order_type != "online-orders" &&
-                (permsArray.value.includes(
-                        `${pageObject.value.permission}_delete`
-                    ) ||
+                (permsArray.value.includes(`${pageObject.value.permission}_delete`) ||
                     permsArray.value.includes("admin")) &&
                 record.payment_status == "unpaid"
             ) {
@@ -807,8 +549,7 @@ export default {
         const initialSetup = () => {
             orderType.value = props.orderType;
             if (props.perPageItems) {
-                datatableVariables.table.pagination.pageSize =
-                    props.perPageItems;
+                datatableVariables.table.pagination.pageSize = props.perPageItems;
             }
             datatableVariables.table.pagination.current = 1;
             datatableVariables.table.pagination.currentPage = 1;
@@ -835,9 +576,7 @@ export default {
                 url: `${props.orderType}?fields=id,xid,unique_id,warehouse_id,x_warehouse_id,warehouse{id,xid,name},from_warehouse_id,x_from_warehouse_id,fromWarehouse{id,xid,name},invoice_number,order_type,order_date,tax_amount,discount,shipping,subtotal,paid_amount,due_amount,order_status,payment_status,total,tax_rate,staff_user_id,x_staff_user_id,staffMember{id,xid,name,profile_image,profile_image_url,user_type},user_id,x_user_id,user{id,xid,user_type,name,profile_image,profile_image_url,phone},user:details{opening_balance,opening_balance_type,credit_period,credit_limit,due_amount,warehouse_id,x_warehouse_id},orderPayments{id,xid,amount,payment_id,x_payment_id},orderPayments:payment{id,xid,amount,payment_mode_id,x_payment_mode_id,date,notes},orderPayments:payment:paymentMode{id,xid,name},items{id,xid,product_id,x_product_id,single_unit_price,unit_price,quantity,tax_rate,total_tax,tax_type,total_discount,subtotal},items:product{id,xid,name,image,image_url,unit_id,x_unit_id},items:product:category{id,name},items:product:unit{id,xid,name,short_name},items:product:details{id,xid,warehouse_id,x_warehouse_id,product_id,x_product_id,current_stock},items:orderItemTaxes{id,xid,order_item_id,order_item_id,tax_name,tax_amount},cancelled,terms_condition,shippingAddress{id,xid,order_id,name,email,phone,address,shipping_address,city,state,country,zipcode}`,
                 filterString,
                 filters: {
-                    user_id: tableFilter.user_id
-                        ? tableFilter.user_id
-                        : undefined,
+                    user_id: tableFilter.user_id ? tableFilter.user_id : undefined,
                     warehouse_id: tableFilter.warehouse_id
                         ? tableFilter.warehouse_id
                         : undefined,
@@ -851,10 +590,8 @@ export default {
                 tableFilter.searchString &&
                 tableFilter.searchString != ""
             ) {
-                datatableVariables.table.searchColumn =
-                    tableFilter.searchColumn;
-                datatableVariables.table.searchString =
-                    tableFilter.searchString;
+                datatableVariables.table.searchColumn = tableFilter.searchColumn;
+                datatableVariables.table.searchString = tableFilter.searchString;
             } else {
                 datatableVariables.table.searchColumn = undefined;
                 datatableVariables.table.searchString = "";
@@ -882,14 +619,11 @@ export default {
 
                         notification.success({
                             message: t("common.success"),
-                            description: t(
-                                `${pageObject.value.langKey}.deleted`
-                            ),
+                            description: t(`${pageObject.value.langKey}.deleted`),
                         });
                     });
                 },
-                onCancel() {
-                },
+                onCancel() {},
             });
         };
 
@@ -897,25 +631,18 @@ export default {
             Modal.confirm({
                 title: t("common.delete") + "?",
                 icon: createVNode(ExclamationCircleOutlined),
-                content: t(
-                    `${pageObject.value.langKey}.selected_delete_message`
-                ),
+                content: t(`${pageObject.value.langKey}.selected_delete_message`),
                 centered: true,
                 okText: t("common.yes"),
                 okType: "danger",
                 cancelText: t("common.no"),
                 onOk() {
                     const allDeletePromise = [];
-                    forEach(
-                        datatableVariables.table.selectedRowKeys,
-                        (selectedRow) => {
-                            allDeletePromise.push(
-                                axiosAdmin.delete(
-                                    `${props.orderType}/${selectedRow}`
-                                )
-                            );
-                        }
-                    );
+                    forEach(datatableVariables.table.selectedRowKeys, (selectedRow) => {
+                        allDeletePromise.push(
+                            axiosAdmin.delete(`${props.orderType}/${selectedRow}`)
+                        );
+                    });
 
                     Promise.all(allDeletePromise).then((successResponse) => {
                         // Update Visible Subscription Modules
@@ -926,15 +653,12 @@ export default {
 
                         notification.success({
                             message: t("common.success"),
-                            description: t(
-                                `${pageObject.value.langKey}.deleted`
-                            ),
+                            description: t(`${pageObject.value.langKey}.deleted`),
                             placement: "bottomRight",
                         });
                     });
                 },
-                onCancel() {
-                },
+                onCancel() {},
             });
         };
 
@@ -943,23 +667,41 @@ export default {
             store.dispatch("auth/updateVisibleSubscriptionModules");
         };
 
+        const posView = (order) => {
+            var totalMrp = 0;
+            var totalTax = 0;
+            forEach(order.items, (item) => {
+                totalMrp += item.quantity * item.mrp;
+                totalTax += item.total_tax;
+            });
+
+            let savingOnMrp = totalMrp - order.total;
+            let savingPercentage =
+                totalMrp > 0 ? ((savingOnMrp / totalMrp) * 100).toFixed(2) : 0;
+            let totalTaxOnItems = totalTax + order.tax_amount;
+
+            printInvoiceOrder.value = {
+                ...order,
+                saving_on_mrp: savingOnMrp,
+                saving_percentage: savingPercentage,
+                total_tax_on_items: totalTaxOnItems,
+            };
+            printInvoiceModalVisible.value = true;
+        };
+
+        const viewPosInvoiceItem=(record)=>{
+
+            selectedItem.value=record;
+            invoiceModalVisible.value=true;
+
+            console.log(record);
+            selectCustomer.value=record.user;
+
+        }
+
         const viewItem = (record) => {
             selectedItem.value = record;
             detailsDrawerVisible.value = true;
-        };
-        const userView = (record) => {
-            let user = {};
-            user = record.user;
-            modalData.value = {...record, ...user};
-            userVisible.value = true;
-        };
-
-        const viewPaymentDetails = (record) => {
-            selectedItem.value = record;
-            paymentModalVisible.value = true;
-        };
-        const closePaymentDetails = () => {
-            paymentModalVisible.value = false;
         };
 
         const restSelectedItem = () => {
@@ -999,7 +741,7 @@ export default {
         const changeOrderStatus = (order) => {
             processRequest({
                 url: `online-orders/change-status/${order.unique_id}`,
-                data: {order_status: order.order_status},
+                data: { order_status: order.order_status },
                 success: (res) => {
                     // Toastr Notificaiton
                     notification.success({
@@ -1008,8 +750,7 @@ export default {
                         description: t("online_orders.order_status_changed"),
                     });
                 },
-                error: (errorRules) => {
-                },
+                error: (errorRules) => {},
             });
         };
 
@@ -1032,14 +773,11 @@ export default {
                             notification.success({
                                 placement: "bottomRight",
                                 message: t("common.success"),
-                                description: t(
-                                    "quotation.quotation_converted_to_sales"
-                                ),
+                                description: t("quotation.quotation_converted_to_sales"),
                             });
                         });
                 },
-                onCancel() {
-                },
+                onCancel() {},
             });
         };
 
@@ -1064,8 +802,7 @@ export default {
                             });
                         });
                 },
-                onCancel() {
-                },
+                onCancel() {},
             });
         };
 
@@ -1090,8 +827,7 @@ export default {
                             });
                         });
                 },
-                onCancel() {
-                },
+                onCancel() {},
             });
         };
         // End For Online Orders
@@ -1099,29 +835,6 @@ export default {
         const resetSelectedRows = () => {
             datatableVariables.table.selectedRowKeys = [];
             emit("onRowSelection", []);
-        };
-
-        const printInvoicePDF = async (pdfUrl) => {
-            datatableVariables.table.loading = true;
-
-            await axiosAdmin
-                .get(pdfUrl, {
-                    responseType: "blob",
-                })
-                .then((response) => {
-                    const pdfBlob = response;
-
-                    const url = URL.createObjectURL(pdfBlob);
-
-                    print(url);
-
-                    URL.revokeObjectURL(url);
-
-                    datatableVariables.table.loading = false;
-                })
-                .catch((error) => {
-                    datatableVariables.table.loading = false;
-                });
         };
 
         watch(props, (newVal, oldVal) => {
@@ -1132,82 +845,13 @@ export default {
             restSelectedItem();
         });
 
+
+
         watch(selectedWarehouse, (newVal, oldVal) => {
             resetSelectedRows();
 
             datatableVariables.table.pagination.current = 1;
             setUrlData();
-        });
-        // for payments //
-        const addEditVisible = ref(false);
-        const addEditType = ref("add");
-        const addEditUrl = ref("order-payments");
-        const formData = ref({});
-        const editItemAmount = ref(0);
-
-        const pageTitle = computed(() => {
-            return addEditType.value == "add"
-                ? t(`payments.add`)
-                : t(`payments.edit`);
-        });
-
-        const successMessage = computed(() => {
-            return addEditType.value == "add"
-                ? t(`payments.created`)
-                : t(`payments.updated`);
-        });
-
-        const addItem = (record) => {
-            selectedItem.value = record;
-            addEditUrl.value = `order-payments`;
-            addEditType.value = "add";
-            formData.value = {
-                ...initPaymentData,
-                order_id: selectedItem.value.xid,
-            };
-            addEditVisible.value = true;
-            editItemAmount.value = 0;
-            setUrlData();
-        };
-
-        const addEditSuccess = (id) => {
-            setUrlData();
-
-            // If add action is performed then move page to first
-            if (addEditType.value == "add") {
-                formData.value = {
-                    order_id: selectedItem.value.xid,
-                    date: undefined,
-                    payment_mode_id: undefined,
-                    amount: "",
-                    notes: "",
-                };
-            }
-            addEditVisible.value = false;
-        };
-
-        const onCloseAddEdit = () => {
-            formData.value = {
-                ...initPaymentData,
-                order_id: selectedItem.value.xid,
-            };
-            addEditVisible.value = false;
-            editItemAmount.value = 0;
-        };
-        const totals = computed(() => {
-            let totalAmount = 0;
-            let dueAmount = 0;
-            let paidAmount = 0;
-            datatableVariables.table.data.forEach((tableRowData) => {
-                totalAmount += tableRowData.total;
-                dueAmount += tableRowData.due_amount;
-                paidAmount += tableRowData.paid_amount;
-            });
-            return {
-                totalAmount,
-                dueAmount,
-                paidAmount,
-            };
         });
 
         return {
@@ -1215,7 +859,7 @@ export default {
             ...datatableVariables,
             filterableColumns,
             pageObject,
-            totals,
+
             formatDate,
             orderStatus,
             orderStatusColors,
@@ -1227,9 +871,10 @@ export default {
 
             selectedItem,
             viewItem,
+            viewPosInvoiceItem,
             restSelectedItem,
             paymentSuccess,
-
+            invoiceModalVisible,
             showDeleteConfirm,
             showSelectedDeleteConfirm,
 
@@ -1238,7 +883,7 @@ export default {
             orderItemDetailsColumns,
             selectedLang,
             initialSetup,
-
+            posView,
             convertToSale,
 
             // For Online Orders
@@ -1250,32 +895,10 @@ export default {
             confirmModalVisible,
             viewModalVisible,
             modalData,
+            selectCustomer,
             // End For Online Orders
+
             getCheckboxProps,
-
-            //for payment//
-            initPaymentData,
-            addEditSuccess,
-            addEditType,
-            addEditUrl,
-            addEditVisible,
-            formData,
-            onCloseAddEdit,
-            successMessage,
-            editItemAmount,
-            pageTitle,
-            addItem,
-            printInvoiceModalVisible,
-            payNowVisible,
-            posView,
-            printInvoiceOrder,
-            paymentModalVisible,
-            viewPaymentDetails,
-            closePaymentDetails,
-            userVisible,
-            userView,
-
-            printInvoicePDF,
         };
     },
 };

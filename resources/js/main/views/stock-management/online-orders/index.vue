@@ -135,7 +135,7 @@ import { onMounted, watch, ref } from "vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import { useRouter } from "vue-router";
 import common from "../../../../common/composable/common";
-import OrderTable from "../../../components/order/OrderTable.vue";
+import OrderTable from "../../../components/order/OrderTable1.vue";
 import DateRangePicker from "../../../../common/components/common/calendar/DateRangePicker.vue";
 import AdminPageHeader from "../../../../common/layouts/AdminPageHeader.vue";
 import InBetaMode from "./InBetaMode.vue";

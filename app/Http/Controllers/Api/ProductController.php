@@ -20,6 +20,7 @@ use App\Models\Variation;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Examyou\RestAPI\ApiResponse;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Vinkla\Hashids\Facades\Hashids;
 use Illuminate\Support\Str;
@@ -35,8 +36,6 @@ class ProductController extends ApiBaseController
 
     public function modifyIndex($query)
     {
-
-
         $request = request();
         $warehouse = warehouse();
 
@@ -52,19 +51,14 @@ class ProductController extends ApiBaseController
                 ->where('product_details.warehouse_id', $warehouse->id)
                 ->whereNull('products.parent_id')
                 ->where('products.product_type', 'single');
-        } else if ($request->has('product_type') && $request->product_type == 'service') {
-            $query = $query->join('product_details', 'product_details.product_id', '=', 'products.id')
-                ->where('product_details.warehouse_id', $warehouse->id)
-                ->whereNull('products.parent_id')
-                ->where('products.product_type', 'service');
-        } else if ($request->has('product_type') && $request->product_type == 'weight') {
-            $query = $query->join('product_details', 'product_details.product_id', '=', 'products.id')
-                ->where('product_details.warehouse_id', $warehouse->id)
-                ->whereNull('products.parent_id')
-                ->where('products.product_type', 'service');
         } else {
             $query = $query->join('product_details', 'product_details.product_id', '=', 'products.id')
                 ->where('product_details.warehouse_id', $warehouse->id);
+        }
+
+        if ($request->has('product_type') && $request->product_type == 'service') {
+            $query = $query->whereNull('products.parent_id')
+                ->where('products.product_type', 'service');
         }
 
 
@@ -91,7 +85,6 @@ class ProductController extends ApiBaseController
 
         return $product;
     }
-
     public function stored(Product $product)
     {
         $request = request();
@@ -149,7 +142,7 @@ class ProductController extends ApiBaseController
                     $productDetails->warehouse_id = $allWarehouse->id;
                     $productDetails->product_id = $newVariantProduct->id;
 
-                    $productDetails->tax_id = $request->has('tax_id') && $request->tax_id != '' ? $request->tax_id : null;
+                    $productDetails->tax_id = isset($allVariation['tax_id']) && $allVariation['tax_id'] != '' ? $allVariation['tax_id'] : null;
                     $productDetails->mrp = $allVariation['mrp'];
                     $productDetails->purchase_price = $allVariation['purchase_price'];
                     $productDetails->sales_price = $allVariation['sales_price'];
@@ -173,7 +166,6 @@ class ProductController extends ApiBaseController
 
                 Common::recalculateOrderStock($currentProductDetails->warehouse_id, $newVariantProduct->id);
             }
-
         } else {
             foreach ($allWarehouses as $allWarehouse) {
                 $productDetails = new ProductDetails();
@@ -186,7 +178,7 @@ class ProductController extends ApiBaseController
                 $productDetails->sales_price = $request->sales_price;
                 $productDetails->purchase_tax_type = $request->purchase_tax_type;
                 $productDetails->sales_tax_type = $request->sales_tax_type;
-                $productDetails->stock_quantitiy_alert = isset($allVariation['stock_quantitiy_alert']) ? $allVariation['stock_quantitiy_alert'] : null;;
+                $productDetails->stock_quantitiy_alert = $request->has('stock_quantitiy_alert') && $request->stock_quantitiy_alert != '' ? $request->stock_quantitiy_alert : null;
                 $productDetails->wholesale_price = $request->wholesale_price;
                 $productDetails->wholesale_quantity = $request->wholesale_quantity;
                 $productDetails->save();
@@ -278,7 +270,7 @@ class ProductController extends ApiBaseController
                         $productDetails->warehouse_id = $allWarehouse->id;
                         $productDetails->product_id = $newVariantProduct->id;
 
-                        $productDetails->tax_id = $request->has('tax_id') && $request->tax_id != '' ? $request->tax_id : null;
+                        $productDetails->tax_id = isset($allVariation['tax_id']) && $allVariation['tax_id'] != '' ? $allVariation['tax_id'] : null;
                         $productDetails->mrp = $allVariation['mrp'];
                         $productDetails->purchase_price = $allVariation['purchase_price'];
                         $productDetails->sales_price = $allVariation['sales_price'];
@@ -303,7 +295,7 @@ class ProductController extends ApiBaseController
                     Common::recalculateOrderStock($currentProductDetails->warehouse_id, $newVariantProduct->id);
                 } else {
                     // This is old variant product
-                    $variantProductId = $this->getIdFromHash($allVariation['xid']);
+                    $variantProductId =  $this->getIdFromHash($allVariation['xid']);
 
                     $variantProduct = Product::find($variantProductId);
 
@@ -321,10 +313,14 @@ class ProductController extends ApiBaseController
                     $variantProduct->name = trim($fullName, ',');
                     $variantProduct->slug = Str::slug($variantProduct->name, '-');
                     $variantProduct->item_code = $allVariation['item_code'];
+                    $variantProduct->image = isset($allVariation['image']) ? $allVariation['image'] : null;
+                    $variantProduct->category_id = $product->category_id;
+                    $variantProduct->brand_id = $product->brand_id;
+                    $variantProduct->unit_id = $product->unit_id;
                     $variantProduct->save();
 
                     $currentProductDetails = $variantProduct->details;
-                    $currentProductDetails->tax_id = $product->tax_id;
+                    $currentProductDetails->tax_id = isset($allVariation['tax_id']) && $allVariation['tax_id'] != '' ? $allVariation['tax_id'] : null;
                     $currentProductDetails->mrp = $allVariation['mrp'];
                     $currentProductDetails->purchase_price = $allVariation['purchase_price'];
                     $currentProductDetails->sales_price = $allVariation['sales_price'];
@@ -359,23 +355,20 @@ class ProductController extends ApiBaseController
             Common::updateProductCustomFields($product, $currentProductDetails->warehouse_id);
             Common::recalculateOrderStock($currentProductDetails->warehouse_id, $product->id);
         }
-
-
     }
 
     public function searchProduct(Request $request)
     {
         $warehouse = warehouse();
-        $searchTerm = $request->search_term;
+        $searchTerm = trim(strtolower($request->search_term));
         $orderType = $request->order_type;
         $warehouseId = $warehouse->id;
 
-        $products = Product::select('products.id', 'products.name', 'products.image', 'products.unit_id', 'products.sku')
+        $products = Product::select('products.id', 'products.name', 'products.image', 'products.unit_id', 'products.product_type')
             ->where(function ($query) use ($searchTerm) {
-                $query->where('products.name', 'LIKE', "%$searchTerm%")
-                    ->orWhere('products.item_code', trim($searchTerm))
-                    ->orWhere('products.parent_item_code', trim($searchTerm))
-                    ->orWhere('products.sku', trim($searchTerm));
+                $query->where(DB::raw('LOWER(products.name)'), 'LIKE', "%$searchTerm%")
+                    ->orWhere(DB::raw('LOWER(products.item_code)'), 'LIKE', "%$searchTerm%")
+                    ->orWhere(DB::raw('LOWER(products.parent_item_code)'), 'LIKE', "%$searchTerm%");
             });
 
         if ($warehouse->products_visibility == 'warehouse') {
@@ -393,7 +386,10 @@ class ProductController extends ApiBaseController
             $products = $products->whereNotIn('products.id', $convertedSelectedProducts);
         }
 
-        $products = $products->where('products.product_type', 'single')->take(8)->get();
+        $products = $products->where(function ($query) {
+            $query->where('products.product_type', 'single')
+                ->orWhere('products.product_type', 'service');
+        })->take(8)->get();
 
         $allProducs = [];
 
@@ -405,9 +401,13 @@ class ProductController extends ApiBaseController
 
         foreach ($products as $product) {
             $productDetails = $product->details;
+            if (!$productDetails) {
+                $productDetails = Common::createProductDetailsForWarehouseIfNotExists($warehouseId, $product->id);
+            }
+
             $tax = Tax::find($productDetails->tax_id);
 
-            if ($orderType == 'purchases' || $orderType == 'quotations' || ($orderType == 'sales' && $productDetails->current_stock > 0) || ($orderType == 'sales-returns') || ($orderType == 'purchase-returns' && $productDetails->current_stock > 0) || ($orderType == 'stock-transfers' && $productDetails->current_stock > 0)) {
+            if ($orderType == 'purchases' || $orderType == 'quotations' || ($orderType == 'sales' && $productDetails->current_stock > 0) || ($orderType == 'sales-returns') || ($orderType == 'purchase-returns' && $productDetails->current_stock > 0) || ($orderType == 'stock-transfers' && $productDetails->current_stock > 0) || $product->product_type == 'service') {
                 $stockQuantity = $productDetails->current_stock;
                 $unit = $product->unit_id != null ? Unit::find($product->unit_id) : null;
 
@@ -426,10 +426,10 @@ class ProductController extends ApiBaseController
 
                     if ($taxType == 'inclusive') {
                         $subTotal = $singleUnitPrice;
-                        $singleUnitPrice = ($singleUnitPrice * 100) / (100 + $taxRate);
+                        $singleUnitPrice =  ($singleUnitPrice * 100) / (100 + $taxRate);
                         $taxAmount = ($singleUnitPrice) * ($taxRate / 100);
                     } else {
-                        $taxAmount = ($singleUnitPrice * ($taxRate / 100));
+                        $taxAmount =  ($singleUnitPrice * ($taxRate / 100));
                         $subTotal = $singleUnitPrice + $taxAmount;
                     }
                 } else {
@@ -439,37 +439,38 @@ class ProductController extends ApiBaseController
                 }
 
                 $allProducs[] = [
-                    'item_id' => '',
-                    'xid' => $product->xid,
-                    'sku' => $product->sku,
-                    'name' => $product->name,
-                    'image' => $product->image,
-                    'image_url' => $product->image_url,
-                    'discount_rate' => 0,
-                    'total_discount' => 0,
-                    'x_tax_id' => $tax ? $tax->xid : null,
-                    'tax_type' => $taxType,
-                    'tax_rate' => $taxRate,
-                    'total_tax' => $taxAmount,
-                    'x_unit_id' => Hashids::encode($product->unit_id),
-                    'unit' => $unit,
-                    'unit_price' => $unitPrice,
-                    'single_unit_price' => $singleUnitPrice,
-                    'subtotal' => $subTotal,
-                    'quantity' => 1,
-                    'stock_quantity' => $stockQuantity,
-                    'unit_short_name' => $unit ? $unit->short_name : '',
+                    'item_id'    =>  '',
+                    'xid'    =>  $product->xid,
+                    'name'    =>  $product->name,
+                    'image'    =>  $product->image,
+                    'image_url'    =>  $product->image_url,
+                    'discount_rate'    =>  0,
+                    'total_discount'    =>  0,
+                    'x_tax_id'    =>  $tax ? $tax->xid : null,
+                    'tax_type'    =>  $taxType,
+                    'tax_rate'    =>  $taxRate,
+                    'total_tax'    =>  $taxAmount,
+                    'x_unit_id'    =>  Hashids::encode($product->unit_id),
+                    'unit'    =>  $unit,
+                    'unit_price'    =>  $unitPrice,
+                    'single_unit_price'    =>  $singleUnitPrice,
+                    'subtotal'    =>  $subTotal,
+                    'quantity'    =>  1,
+                    'stock_quantity'    =>  $stockQuantity,
+                    'unit_short_name'    =>  $unit ? $unit->short_name : '',
+                    'product_type' => $product->product_type
                 ];
             }
 
             // All Type products
             if (!$request->has('order_type')) {
                 $allProducs[] = [
-                    'xid' => $product->xid,
-                    'name' => $product->name,
-                    'image' => $product->image,
-                    'image_url' => $product->image_url,
-                    'stock_quantity' => $productDetails->current_stock,
+                    'xid'    =>  $product->xid,
+                    'name'    =>  $product->name,
+                    'image'    =>  $product->image,
+                    'image_url'    =>  $product->image_url,
+                    'stock_quantity'    =>  $productDetails->current_stock,
+                    'product_type' => $product->product_type
                 ];
             }
         }
@@ -508,15 +509,15 @@ class ProductController extends ApiBaseController
         return ApiResponse::make('Imported Successfully', []);
     }
 
+    public function checkProductVariant(CheckVariantRequest $request)
+    {
+        return ApiResponse::make('Added Successfully', []);
+    }
+
     public function getLastProductSkuCode()
     {
         $productCode = Product::latest()->first()?Product::latest()->first()->id+1:1;
         $formattedCode = str_pad($productCode, 5, "0", STR_PAD_LEFT);
         return ApiResponse::make('Ok',['product_sku_code'=>$formattedCode]);
-    }
-
-    public function checkProductVariant(CheckVariantRequest $request)
-    {
-        return ApiResponse::make('Added Successfully', []);
     }
 }

@@ -100,7 +100,7 @@
                             :key="item.xid">
                             <td>{{ index + 1 }}</td>
                             <td>{{ item.product.name }}</td>
-                            <td>{{ item.quantity + "" + item.product.unit.short_name }}</td>
+                            <td>{{ item.quantity + "" + item.product.unit?.short_name }}</td>
                             <!--                                <td v-if="selectedWarehouse.show_mrp_on_invoice">-->
                             <!--                                    {{ item.mrp ? formatAmountCurrency(item.mrp) : "-" }}-->
                             <!--                                </td>-->

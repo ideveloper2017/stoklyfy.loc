@@ -11,7 +11,7 @@
         "php": "^8.1",
         "authorizenet/authorizenet": "*",
         "barryvdh/laravel-dompdf": "*",
-        "doctrine/dbal": "*",
+        "doctrine/dbal": "^3.0",
         "examyou/lara-installer": "^10.0",
         "examyou/rest-api": "^10.0",
         "guzzlehttp/guzzle": "^7.2",
@@ -22,7 +22,10 @@
         "league/flysystem-aws-s3-v3": "^3.0",
         "maatwebsite/excel": "*",
         "mews/purifier": "*",
+        "milon/barcode": "^11.0",
+        "mitchbred/entrust": "^2.4",
         "mollie/laravel-mollie": "*",
+        "mpdf/mpdf": "^8.2",
         "nwidart/laravel-modules": "^10.0",
         "paypal/rest-api-sdk-php": "*",
         "php-open-source-saver/jwt-auth": "*",
@@ -41,8 +44,7 @@
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^7.0",
         "phpunit/phpunit": "^10.1",
-        "spatie/laravel-ignition": "^2.0",
-        "mitchbred/entrust": "dev-main"
+        "spatie/laravel-ignition": "^2.0"
     },
     "autoload": {
         "files": [
@@ -79,11 +81,6 @@
         "laravel": {
             "dont-discover": []
         }
-    },
-    "merge-plugin": {
-        "include": [
-            "Modules/*/composer.json"
-        ]
     },
     "config": {
         "optimize-autoloader": true,
