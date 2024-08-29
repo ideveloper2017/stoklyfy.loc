@@ -10,16 +10,38 @@
                         :lg="{ span: 16, offset: 4 }"
                     >
                         <a-card
+                            v-if="resetPassword"
                             :title="null"
                             class="login-div"
                             :bordered="innerWidth <= 768 ? true : false"
                         >
                             <a-form layout="vertical">
-                                <div class="login-logo mb-30">
+                                <div class="login-logo">
                                     <img
                                         class="login-img-logo"
                                         :src="globalSetting.light_logo_url"
                                     />
+                                </div>
+                                <br />
+                                <div
+                                    style="
+                                        text-align: left;
+                                        margin-top: 10px;
+                                        margin-bottom: 30px;
+                                    "
+                                >
+                                    <div
+                                        style="
+                                            font-weight: bold;
+                                            font-size: 18px;
+                                            margin-bottom: 2px;
+                                        "
+                                    >
+                                        {{ $t("user.sign_in") }}
+                                    </div>
+                                    <div style="margin-bottom: 14px">
+                                        {{ $t("messages.please_login_to_your_account") }}
+                                    </div>
                                 </div>
                                 <a-alert
                                     v-if="onRequestSend.error != ''"
@@ -69,7 +91,7 @@
                                     />
                                 </a-form-item>
 
-                                <a-form-item class="mt-30">
+                                <a-form-item class="mt-30 mb-0">
                                     <a-button
                                         :loading="loading"
                                         @click="onSubmit"
@@ -80,8 +102,104 @@
                                         {{ $t("menu.login") }}
                                     </a-button>
                                 </a-form-item>
+                                <a-form-item
+                                    class="mt-10"
+                                    style="text-align: center; font-weight: bold"
+                                >
+                                    <a :loading="loading" @click="onResetPass">
+                                        {{ $t("menu.reset_password") }}
+                                    </a>
+                                </a-form-item>
+                                <a-form-item
+                                    v-if="appType === 'saas'"
+                                    class="mt-10"
+                                    style="text-align: center; font-weight: bold"
+                                >
+                                    <a-button
+                                        style="font-weight: bold"
+                                        type="link"
+                                        :loading="loading"
+                                        @click="
+                                            () =>
+                                                $router.push({
+                                                    name: 'superadmin.register',
+                                                })
+                                        "
+                                    >
+                                        {{ $t("front_website.register") }}
+                                    </a-button>
+                                </a-form-item>
                             </a-form>
 <!--                            <DemoCredentials :credentials="credentials" />-->
+                        </a-card>
+                        <a-card
+                            v-else
+                            :title="null"
+                            class="login-div"
+                            :bordered="innerWidth <= 768 ? true : false"
+                        >
+                            <a-alert
+                                v-if="onResetRequest.success"
+                                :message="$t('messages.reset_success')"
+                                type="success"
+                                show-icon
+                                class="mb-20 mt-10"
+                            />
+                            <a-form layout="vertical" v-else>
+                                <div class="login-logo mb-30">
+                                    <img
+                                        class="login-img-logo"
+                                        :src="globalSetting.light_logo_url"
+                                    />
+                                </div>
+                                <br />
+                                <a-alert
+                                    v-if="onResetRequest.error != ''"
+                                    :message="onResetRequest.error"
+                                    type="error"
+                                    show-icon
+                                    class="mb-20 mt-10"
+                                    style="margin-top: 40px"
+                                />
+
+                                <a-form-item
+                                    :label="$t('user.email_phone')"
+                                    name="email"
+                                    :help="rules.email ? rules.email.message : null"
+                                    :validateStatus="rules.email ? 'error' : null"
+                                    style="margin-top: 32px"
+                                >
+                                    <a-input
+                                        v-model:value="resetCredential.email"
+                                        :placeholder="
+                                            $t('common.placeholder_default_text', [
+                                                $t('user.email_phone'),
+                                            ])
+                                        "
+                                    />
+                                </a-form-item>
+
+                                <a-form-item class="mt-30 mb-0">
+                                    <a-button
+                                        :loading="loading"
+                                        @click="onReset"
+                                        class="login-btn"
+                                        block
+                                        type="primary"
+                                    >
+                                        {{ $t("menu.reset") }}
+                                    </a-button>
+                                </a-form-item>
+                                <a-form-item class="mt-10">
+                                    <a-form-item
+                                        style="text-align: center; font-weight: bold"
+                                    >
+                                        <a :loading="loading" @click="onResetClose">
+                                            <ArrowLeftOutlined /> {{ $t("common.back") }}
+                                        </a>
+                                    </a-form-item>
+                                </a-form-item>
+                            </a-form>
                         </a-card>
                     </a-col>
                 </a-row>
@@ -97,6 +215,7 @@
 
 <script>
 import { defineComponent, reactive, ref } from "vue";
+import { ArrowLeftOutlined } from "@ant-design/icons-vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import common from "../../../common/composable/common";
@@ -106,6 +225,7 @@ import DemoCredentials from "./DemoCredentials.vue";
 export default defineComponent({
     components: {
         DemoCredentials,
+        ArrowLeftOutlined,
     },
     setup() {
         const { addEditRequestAdmin, loading, rules } = apiAdmin();
@@ -113,6 +233,10 @@ export default defineComponent({
         const loginBackground = globalSetting.value.login_image_url;
         const store = useStore();
         const router = useRouter();
+        const resetPassword = ref(true);
+        const resetCredential = reactive({
+            email: "",
+        });
         const credentials = reactive({
             email: null,
             password: null,
@@ -121,6 +245,54 @@ export default defineComponent({
             error: "",
             success: "",
         });
+
+        const onResetRequest = ref({
+            error: "",
+            success: "",
+        });
+
+        const onResetPass = () => {
+            resetErrorMessages();
+
+            resetPassword.value = false;
+        };
+
+        const onResetClose = () => {
+            resetPassword.value = true;
+
+            resetErrorMessages();
+        };
+
+        const resetErrorMessages = () => {
+            onRequestSend.value = {
+                error: "",
+                success: "",
+            };
+            onResetRequest.value = {
+                error: "",
+                success: "",
+            };
+            rules.value = {};
+        };
+
+        const onReset = () => {
+            addEditRequestAdmin({
+                url: "auth/forgot-password",
+                data: resetCredential,
+                success: (response) => {
+                    onResetRequest.value = {
+                        error: "",
+                        success: true,
+                    };
+                },
+                error: (err) => {
+                    onResetRequest.value = {
+                        error: err.error.message ? err.error.message : "",
+                        success: false,
+                    };
+                },
+            });
+        };
 
         const onSubmit = () => {
             onRequestSend.value = {
@@ -136,16 +308,15 @@ export default defineComponent({
                     store.commit("auth/updateUser", user);
                     store.commit("auth/updateToken", response.token);
                     store.commit("auth/updateExpires", response.expires_in);
+                    store.commit("auth/updateSupperVariable", false);
                     store.commit(
                         "auth/updateVisibleSubscriptionModules",
                         response.visible_subscription_modules
                     );
 
                     if (appType == "non-saas") {
-                        store.dispatch('auth/updateAllUnits')
                         store.dispatch("auth/updateAllWarehouses");
                         store.commit("auth/updateWarehouse", response.user.warehouse);
-                        store.commit('auth/updateUnit',response.unit);
 
                         router.push({
                             name: "admin.dashboard.index",
@@ -154,6 +325,8 @@ export default defineComponent({
                     } else {
                         if (user.is_superadmin && user.user_type == "super_admins") {
                             store.commit("auth/updateApp", response.app);
+                            store.commit("auth/updateSupperToken", response.token);
+                            store.commit("auth/updateSupperVariable", true);
                             store.commit(
                                 "auth/updateEmailVerifiedSetting",
                                 response.email_setting_verified
@@ -172,10 +345,8 @@ export default defineComponent({
                                 "auth/updateAddMenus",
                                 response.shortcut_menus.credentials
                             );
-                            store.dispatch('auth/updateAllUnits')
                             store.dispatch("auth/updateAllWarehouses");
                             store.commit("auth/updateWarehouse", response.user.warehouse);
-                            store.commit('auth/updateUnit',response.unit);
                             router.push({
                                 name: "admin.dashboard.index",
                                 params: { success: true },
@@ -193,6 +364,7 @@ export default defineComponent({
         };
 
         return {
+            appType,
             loading,
             rules,
             credentials,
@@ -202,6 +374,12 @@ export default defineComponent({
             loginBackground,
 
             innerWidth: window.innerWidth,
+            onResetPass,
+            onResetClose,
+            resetPassword,
+            onReset,
+            resetCredential,
+            onResetRequest,
         };
     },
 });
