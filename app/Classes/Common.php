@@ -63,25 +63,25 @@ class Common
     {
         return [
             'piece' => [
-                'name' => 'piece',
-                'short_name' => 'pc',
+                'name' => 'dona',
+                'short_name' => 'dn',
                 'operator' => 'multiply',
                 'operator_value' => '1',
             ],
             'meter' => [
-                'name' => 'meter',
+                'name' => 'metr',
                 'short_name' => 'm',
                 'operator' => 'multiply',
                 'operator_value' => '1',
             ],
             'kilogram' =>  [
-                'name' => 'kilogram',
+                'name' => 'kilogramm',
                 'short_name' => 'kg',
                 'operator' => 'multiply',
                 'operator_value' => '1',
             ],
             'liter' =>  [
-                'name' => 'liter',
+                'name' => 'litr',
                 'short_name' => 'l',
                 'operator' => 'multiply',
                 'operator_value' => '1',
